@@ -1,8 +1,10 @@
-```{r}
 ---
 title: "Procedure and Details"
-output: html_document
+output:
+  github_document:
+    toc: true
 ---
+
 # Assignment – Geometry Processing and Method Development
 
 - Create folder connection
@@ -14,18 +16,18 @@ Firstly, add both the **Tract** and **Townships** layers.
 
 ### Townships Layer
 mass_townships_2010_aeac84
-![Townships layer](images/Townships.png)
+![Townships layer](Images/Townships.png)
 
 ### Tracts Layer
 mass_tracts_2010_aeac84
-![Tracts layer](images/Tracts.png)
+![Tracts layer](Images/Tracts.png)
 
 ## Use clip Tool
 Input:tract
 Cliplayer: township
 The input tract will be clipped in the shape of the township
 [Clip (Analysis)—ArcGIS Pro | Documentation](https://pro.arcgis.com/en/pro-app/latest/tool-reference/analysis/clip.htm)
-![Tracts_townships Clip layer](images/tracts_townships_clip1.png)
+![Tracts_townships Clip layer](Images/tracts_townships_clip1.png)
 
 ## Use Erase Tool
 Input: Townships
@@ -35,7 +37,7 @@ I removed the places where tracts overlap with the townships, the edges are rema
 [Erase (Analysis)—ArcGIS Pro | Documentation](https://pro.arcgis.com/en/pro-app/latest/tool-reference/analysis/erase.htm)
 Remove the original layers to minimize the confusion
 The erased layer has multi polygon
-![townships_Tracts Erase layer](images/townships_tracts_erse1.png)
+![townships_Tracts Erase layer](Images/townships_tracts_erse1.png)
 
 ## Multipart to single part Tool
 The erased layer is multipart, it needs to be seperated
@@ -125,12 +127,8 @@ Join table: mass_tracts_townships_Dissolve
 Join field: OBJECTID_1
 
 It basically adds the extra data to the tracts orginal layer, which is important to out analysis
-![Tracts_townships Dissolve layer](images/tracts_townships_dissolve.png)
+![Tracts_townships Dissolve layer](Images/tracts_townships_dissolve.png)
 
 Conclusion: First, I clipped the tract to the township so that the township shape was added to the tract. This process left slivers (see the erase image). These slivers need to be merged with the clipped tract, and the geometry checked. Next, dissolve the merged file so that the joined pieces attach properly to the clipped tract. In this way, we can transfer the shape of one layer onto another layer.
 
-
-
-
-```
 
