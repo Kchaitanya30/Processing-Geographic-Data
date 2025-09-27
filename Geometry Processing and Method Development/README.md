@@ -1,8 +1,8 @@
 # Geometry Processing and Method Development -  Assignment 1
 
-- Create folder connection
-- Create a sandbox.gdb and production.gdb
-- Work on the sandbox so that the orginal data will be save
+- Create a folder connection
+- Create a `sandbox.gdb` and `production.gdb`
+- Work in the sandbox so that the original data will be safe
 
 ## Step 1 – Add Layers
 Firstly, add both the **Tract** and **Townships** layers.
@@ -26,21 +26,21 @@ mass_tracts_2010_aeac84
 - Input: Townships
 - Erase: Tracts
 - Output: mass_townships_tracts_2010_aeac84_erse1
-- I removed the places where tracts overlap with the townships, the edges are remained
+- Removed the places where tracts overlap with the townships; the edges remained
 - [Erase (Analysis)—ArcGIS Pro | Documentation](https://pro.arcgis.com/en/pro-app/latest/tool-reference/analysis/erase.htm)
-- Remove the original layers to minimize the confusion
-- The erased layer has multi polygon
+- Remove the original layers to minimize confusion
+- The erased layer is multi polygon
 ![townships_Tracts Erase layer](Images/townships_tracts_erse1.png)
 
 ## Multipart to single part Tool
-- The erased layer is multipart, it needs to be seperated
+- The erased layer is multipart and it needs to be seperated
 - Multipart to single part 
 - Input: mass_townships_tracts_2010_aeac84_erse1
 - Result: mass_townships_2010_aeac84_MultipartToSi
 
 
 ## Near
-- First vertices of the one polygon and first vertices of the another polygon will be i
+- First vertices of the one polygon and first vertices of the another polygon will be identified
 - Proximity > Near
 - Input: mass_townships_2010_aeac84_MultipartToSi
 - Near features: mass_tracts_townships_2010_aeac84_clip1
@@ -49,8 +49,8 @@ mass_tracts_2010_aeac84
 - Field Name>
 - Location x-coordinate: Near_X
 - Location y-coordinate: Near_Y
-- This add the Near FID, NEAR DIST, NEAR_X, NEAR_Y fields tot he MultipartToSi layer
-- It basically checks the nearest distnce of the clip layer that multipart layer
+- This adds the NEAR_FID, NEAR_DIST, NEAR_X, and NEAR_Y fields to the MultipartToSi layer
+- It checks the nearest distance from the clip layer to the multipart layer
 
 ## Join
 - Join field
@@ -60,7 +60,7 @@ mass_tracts_2010_aeac84
 - Join field: NEAR_FID
 - Transfer fields:
    - Select All fields are selected expect shape_area and shape_length
-- In the tracts there are lot of nulls because they are not attached to any of the township pieces
+- In the tracts there are many nulls because they are not attached to any township pieces
 
 
 ## Merge: 
@@ -71,8 +71,8 @@ mass_tracts_2010_aeac84
     - NEAR_FID is null
 - NEAR_FID  >  Calculated field
     - Select OBJECTID_1
-- Because NEAR_FID AND OBJECTID_1 same this is a important step for dissolve
-
+-  Because NEAR_FID and OBJECTID_1 are the same, this is an important step for dissolve
+  
 ## Validate topology: 
 - To check the quality of the geometry
 
@@ -87,7 +87,7 @@ mass_tracts_2010_aeac84
 - Check delete features with null geometry
 - Enable undo, for our safety if the layer get corrupted
 - Risk is when we try to do it, it may corrupt the layer
-- Check the geometry again to check if the error solved
+- Check the geometry again to confirm the error is solved
 
 ## Some techniques to try
 #### Feature envelope to polygon 
@@ -106,12 +106,11 @@ mass_tracts_2010_aeac84
 - Input: mass_tracts_townships_Merge
 - Output: mass_tracts_townships_Dissolve
 - Dissolve Fields: NEAR_FID
-- Check Create a multi part feature -
-- Dont check unsplit - it could create slivers
-- Based on a common field or common identifier, it dissolves
-- It is a one to many relationship
-- We have find similar value fields, it mean
-- It dissolved all the middle polygons in it
+- Check **Create multipart feature**
+- Don’t check **Unsplit** — it could create slivers
+- Based on a common field or identifier, it dissolves features
+- It is a one-to-many relationship
+- It dissolves the middle polygons
 
 ## Join
 - Input:mass_tracts_2010_aeac84
@@ -122,6 +121,7 @@ mass_tracts_2010_aeac84
 - It basically adds the extra data to the tracts orginal layer, which is important to out analysis
 ![Tracts_townships Dissolve layer](Images/tracts_townships_dissolve.png)
 
-## Conclusion: First, I clipped the tract to the township so that the township shape was added to the tract. This process left slivers (see the erase image). These slivers need to be merged with the clipped tract, and the geometry checked. Next, dissolve the merged file so that the joined pieces attach properly to the clipped tract. In this way, we can transfer the shape of one layer onto another layer.
+## Conclusion:
+First, I clipped the tract to the township so that the township shape was added to the tract. This process left slivers (see the erase image). These slivers need to be merged with the clipped tract, and the geometry checked. Next, dissolve the merged file so that the joined pieces attach properly to the clipped tract. In this way, we can transfer the shape of one layer onto another layer.
 
 
