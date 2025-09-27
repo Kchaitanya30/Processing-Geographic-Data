@@ -4,14 +4,14 @@
 - Create a `sandbox.gdb` and `production.gdb`
 - Work in the sandbox so that the original data will be safe
 
-## Step 1 – Add Layers
+## Add Layers
 Firstly, add both the **Tract** and **Townships** layers.
 
-### Townships Layer
+## Townships Layer
 mass_townships_2010_aeac84
 ![Townships layer](Images/Townships.png)
 
-### Tracts Layer
+## Tracts Layer
 mass_tracts_2010_aeac84
 ![Tracts layer](Images/Tracts.png)
 
