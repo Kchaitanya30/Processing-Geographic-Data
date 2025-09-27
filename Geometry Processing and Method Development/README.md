@@ -1,11 +1,4 @@
----
-title: "Procedure and Details"
-output:
-  github_document:
-    toc: true
----
-
-# Assignment – Geometry Processing and Method Development
+# Geometry Processing and Method Development -  Assignment 1
 
 - Create folder connection
 - Create a sandbox.gdb and production.gdb
@@ -129,6 +122,6 @@ Join field: OBJECTID_1
 It basically adds the extra data to the tracts orginal layer, which is important to out analysis
 ![Tracts_townships Dissolve layer](Images/tracts_townships_dissolve.png)
 
-Conclusion: First, I clipped the tract to the township so that the township shape was added to the tract. This process left slivers (see the erase image). These slivers need to be merged with the clipped tract, and the geometry checked. Next, dissolve the merged file so that the joined pieces attach properly to the clipped tract. In this way, we can transfer the shape of one layer onto another layer.
+## Conclusion: First, I clipped the tract to the township so that the township shape was added to the tract. This process left slivers (see the erase image). These slivers need to be merged with the clipped tract, and the geometry checked. Next, dissolve the merged file so that the joined pieces attach properly to the clipped tract. In this way, we can transfer the shape of one layer onto another layer.
 
 
