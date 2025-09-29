@@ -164,7 +164,7 @@ Output Description:
 
 #### Map showing the Urbanized area in Massachusetts Townships
 < img src="figures/urbn.png" alt="Alt text" width="400"/>
-
+<img src="figures/urbn.png" alt="Alt text" width="400"/>
 #### Map showing the Un-Urbanized area in Massachusetts Townships
 < img src="figures/nurb.png" alt="Alt text" width="400"/>
 ### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
