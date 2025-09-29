@@ -162,7 +162,11 @@ Output features: mass_townships_2010_aeac84_s2
 Output Description:
 - After exporting the township layer, I have removed all the joins. Now I have the new township layer with urbanized and unurbanized values for each town and my orginal township layer is safe with not edits.
 
+#### Map showing the Urbanized area in Massachusetts Townships
+< img src="figures/urbn.png" alt="Alt text" width="400"/>
 
+#### Map showing the Un-Urbanized area in Massachusetts Townships
+< img src="figures/nurb.png" alt="Alt text" width="400"/>
 ### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
 
 #### Alter field
@@ -218,6 +222,15 @@ explained what analaysis I have done and asked to check which fields can be remo
   - Temporary join fields created during the overlay/union process (like FID_1, Join_Count, etc.
 
 
+## Stage III - Spatially Aggregating Geographic Data
+
+### Summary Statistics
+Purpose: To generate aggregate count of the collision type
+Input: mass_trac_crashes_2010_aeac84  (point)
+Field: Mannercoll
+Statistic type: Count
+Case field: Manner coll
+It works like group by case field and give me the count of the each grouped field value
 
 
 
