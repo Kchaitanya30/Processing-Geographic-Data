@@ -24,6 +24,8 @@ mass_townships_2010_aeac84
 Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
 Description: This is the township layer for Massachusetts
 Number of features: 351
+
+
 new_england_urbanized_areas_2010_aeac84
 Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
 Description: This is the polygon showing the urbanized areas in the Massachusetts
