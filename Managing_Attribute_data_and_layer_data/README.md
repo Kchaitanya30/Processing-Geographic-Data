@@ -39,7 +39,7 @@ Number of features: 21
 - In this assignment we will be working on collision data in massachusets, where initially township layer is divided to urbanized and unurbanized so that collision analysis can be done for both the areas. the following steps are done
 
 - Overlay the township and unurbanized layers, the below figure shows how different they are
-  <img src="figures/townshipurboverlay.png" alt="Alt text" width="400"/>
+  <img src="figures/townshipurboverlay.png" alt="Alt text" width="400" style="display: block; margin: 0 auto;">
   
 ## Integrate the New England Urbanized Area layer into the Massachusetts Township layer with a spatial overlay tool.
 
