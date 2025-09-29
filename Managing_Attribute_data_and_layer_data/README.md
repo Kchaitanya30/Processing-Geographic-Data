@@ -64,13 +64,14 @@ Output Description:
 Create two fields for identity layer, with one field being labeled AREA_URB and the other being AREA_NURB. These will hold the square kilometers for the urbanized and non-urbanized polygons, choose the type as Double as the area has decibel values
 
 Task is to find how much area is urbanized and how is not urbanized
-
+### Select by Attributes
 For AREA_NURB
 Purpose: To select the attributes of a layer with condition.
 Tool: Select by Attributes
 Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
 Where: FID_new_england_urbanized_areas_2010_aeac84    is equal to -1
 
+### Calculate field
 Right click on the AREA_NURB > Calculate field
 Purpose: To calculate the values of a field for a feature class/feature layer or raster
 Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
@@ -164,7 +165,7 @@ Output Description:
 
 ### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
 
-
+#### Alter field
 Tool: Alter field
 Purpose: To rename fields and field aliases
 Input: mass_townships_2010_aeac84_s2
