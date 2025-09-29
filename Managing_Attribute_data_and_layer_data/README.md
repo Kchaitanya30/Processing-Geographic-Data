@@ -229,11 +229,129 @@ explained what analaysis I have done and asked to check which fields can be remo
 
 ### Summary Statistics
 Purpose: To generate aggregate count of the collision type
-Input: mass_trac_crashes_2010_aeac84  (point)
+Input: mass_trac_crashes_2010_aeac84  (point data)
 Field: Mannercoll
 Statistic type: Count
-Case field: Manner coll
-It works like group by case field and give me the count of the each grouped field value
+Case field: Mannercoll
+Output: mass_trac_crashes_2010_aeac84_smry
+Output description: It works like group by case field and give me the count of the each grouped field value
+
+
+### Recoding of data 
+Create a new field in massTract_crashes2010 layer and group the data into larger categories based on the idea of balancing the frequencies with a logical grouping of the crash types. This is called “recoding” and these new collision type categories will be used to spatially join the crash locations as general groups to the Massachusetts Township and Census Tract layers. The new MassTRAC collision categories for spatially joining to the integrated township layer should be:
+a. Angle;
+b. Side-swipes (Sideswipe Opposite Direction, Sideswipe Same Direction);
+c. Single Vehicle (Single Vehicle, Not Collision Between two Vehicles in traffic);
+d. End to End (Head On, Rear End, Rear-to-Rear);
+e. Unknown (Unknown, Reported but invalid, Not Reported, Missing)
+
+#### Add field
+Add field:
+Purpose: To Add a field in the attribute table
+Field name: MannerColl_ctgy  
+Alias: MannerColl_ctgy  
+Data Type: Text 
+Length: 6( Give max number you think)
+
+#### Select by attributes
+Tool: Select by attributes 
+Purpose: To select all the desired rows in the columns
+Input: mass_trac_crashes_2010_aeac84
+Where: MannerColl   is equal   Angle
+Output description: It selected all the rows inthe MannerColl which has the value angle
+- In select by attributes ( For selecting single value choose “is equal” and for multiple values choose “include” )
+
+#### Calculate field
+Input: mass_trac_crashes_2010_aeac84
+Check: use the selected rows: 31631
+Field name: MannerCol_ctgy
+Expression: MannerCol_ctgy = "ANGL"
+Output description: It populates are the selected rows with ANGl text
+- In calculate field while giving name choose quotes “ “  as it is a text
+
+
+#### Select by attributes
+Tool: Select by attributes 
+Purpose: To select all the desired rows in the columns
+Input: mass_trac_crashes_2010_aeac84
+Where: MannerColl   Includes the value(s)   Single Vehicle, Not Collision Between two Vehicles in traffic
+Output description: It selected all the rows inthe MannerColl which has the values  Single Vehicle, Not Collision Between two Vehicles in traffic
+
+#### Calculate field
+Input: mass_trac_crashes_2010_aeac84
+Check: use the selected rows: 23409
+Field name: MannerCol_ctgy
+Expression: MannerCol_ctgy = "SVHL"
+Output description: It populates are the selected rows with SVHL text
+
+
+#### Select by attributes
+Tool: Select by attributes 
+Purpose: To select all the desired rows in the columns
+Input: mass_trac_crashes_2010_aeac84
+Where: MannerColl   Includes the value(s)  Sideswipe Opposite Direction, Sideswipe Same Direction
+Output description: It selected all the rows inthe MannerColl which has the values Sideswipe Opposite Direction, Sideswipe Same Direction
+
+#### Calculate field
+Input: mass_trac_crashes_2010_aeac84
+Check: use the selected rows: 12709
+Field name: MannerCol_ctgy
+Expression: MannerCol_ctgy = "SSWP"
+Output description: It populates are the selected rows with SVHL text
+
+
+#### Select by attributes
+Tool: Select by attributes 
+Purpose: To select all the desired rows in the columns
+Input: mass_trac_crashes_2010_aeac84
+Where: MannerColl   Includes the value(s)  Head On, Rear End, Rear-to-Rear
+Output description: It selected all the rows inthe MannerColl which has the values Head On, Rear End, Rear-to-Rear
+
+#### Calculate field
+Input: mass_trac_crashes_2010_aeac84
+Check: use the selected rows: 35213
+Field name: MannerCol_ctgy
+Expression: MannerCol_ctgy = "ETED"
+Output description: It populates are the selected rows with ETED text
+
+
+#### Select by attributes
+Tool: Select by attributes 
+Purpose: To select all the desired rows in the columns
+Input: mass_trac_crashes_2010_aeac84
+Where: MannerColl   Includes the value(s)  Unknown, Reported but invalid, Not Reported, Missing
+Output description: It selected all the rows inthe MannerColl which has the values  Unknown, Reported but invalid, Not Reported, Missing
+
+#### Calculate field
+Input: mass_trac_crashes_2010_aeac84
+Check: use the selected rows: 3636
+Field name: MannerCol_ctgy
+Expression: MannerCol_ctgy = "OTHR"
+Output description: It populates are the selected rows with OTHR text
+Now the recoding is done, A new field with clear values are added. The next step is to overlap the crashes point layer to the new england township and urbanized polygon layer.
+
+### Assigning Collision Types to Areal Geographies
+- Mask the data and make only visible the observations that are required
+
+#### Defination query
+Purpose: The locations  need to be separated so that the types are processed individually 
+From the layer Table of Contents, the properties option is selected to bring up the dialog box. In it choose New defination query
+Where MannerCol_ctgy   is equal to   ANGL
+
+Once the Definition Query has been specified, the locations need to be aggregated (spatially joined). 
+Aggregate the individual and collision group types with a SPATIAL JOIN from the massTRAC_crashes2010 layer to the integrated township and urbanized area layer (new_england_urbanized_areas_townships_2010_aeac84_idty)
+
+### Spatial Join
+Purpose: To join the township_and_urbanized layer to the crash points. This executes a “point-in-polygon” operation that creates a count of all the locations within each township polygon
+Target features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Join features: massTRAC_crashes2010
+Join operation: Join one to one
+match option: Intersect
+Output: urbanized_township_crash_sj
+Output description: The result is all the ANGL filtered points are added to the polygon layer
+
+< img src = "figures/pointpoly.png" Alt="Alt text' width="400"/>
+
 
 
 
