@@ -10,10 +10,10 @@ how to geo-process layers using geographic attributes.
 
 ## Background
 A primary objective of GIS database management in many organizations is to provide geographic data for use by staff or the public. Preparing data for use by others is a laborious task that requires using a systematic process (method) that strings a series of tools (techniques) together to reduce error and standardize data. In preparing data for use by others, both the attribute and geometric data of a geography need to be cleaned and prepared before being made available for use. Not processing data to reduce error and standardizing the geographies (geometry) to make them consistent leads to incorrect analyses that can range from minimal to severe. Geo-processing is the preparation and cleaning of geographic data, including attributes with those data, There are four general stages of geographic data management, which are 
-(i) Data Collections, Input, & Correction, 
-(ii) Storage & Retrieval, 
-(iii) Manipulation & Analysis,
-(iv) Output & Reporting (Martin, 1995). 
+- (i) Data Collections, Input, & Correction, 
+- (ii) Storage & Retrieval, 
+- (iii) Manipulation & Analysis,
+- (iv) Output & Reporting (Martin, 1995). 
 
 Geo-processing can occur in any of these stages, but data preparation and cleaning for use by others primarily occurs in
 first stage. In this first stage data are collected by either creating the data or obtaining copies of data from other sources, both of which are for meeting the objectives of the
