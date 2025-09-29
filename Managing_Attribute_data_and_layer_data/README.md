@@ -350,7 +350,7 @@ match option: Intersect
 Output: urbanized_township_crash_sj
 Output description: The result is all the ANGL filtered points are added to the polygon layer
 
-< img src = "figures/pointpoly.png" Alt="Alt text' width="400"/>
+< img src="figures/pointpoly.png" Alt="Alt text' width="400"/>
 
 
 
