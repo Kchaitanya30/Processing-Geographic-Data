@@ -42,12 +42,12 @@ Number of features: 21
 ## Integrate the New England Urbanized Area layer into the Massachusetts Township layer with a spatial overlay tool.
 
 ### Identity
-It is used integrate the Urbanized Area layer (identity) into the Massachusetts Township layer (input). In terms of geo-processing, integration mean combining two different geographies (layers) into one, splitting the polygons of each geography where their geometries intersect. Doing so creates a new layer of both geographies, in which new polygons are created from splitting each where they overlap.
+Purpose: It is used integrate the Urbanized Area layer (identity) into the Massachusetts Township layer (input). In terms of geo-processing, integration mean combining two different geographies (layers) into one, splitting the polygons of each geography where their geometries intersect. Doing so creates a new layer of both geographies, in which new polygons are created from splitting each where they overlap.
 Input: mass_townships_2010_aeac84
 Identify features: new_england_urbanized_areas_2010_aeac84
 Attributes to join: All attributes ( It makes all attributes from input features as well as identity features will be transfered to the output layer )
 Output layer: new_england_urbanized_areas_townships_2010_aeac84_idty
-
+Output Description: 
 - It basically cut the townships layer and added the new england urbanized layer
 - Now it has both the townships polygons and urbanized polygons
 
@@ -61,48 +61,54 @@ Output layer: new_england_urbanized_areas_townships_2010_aeac84_idty
 ### New fields inthe new_england_urbanized_areas_townships_2010_aeac84_idty
 Create two fields for identity layer, with one field being labeled AREA_URB and the other being AREA_NURB. These will hold the square kilometers for the urbanized and non-urbanized polygons, choose the type as Double as the area has decibel values
 
-## After integrating the New England Urbanized Area layer into the Massachusetts Township layer, calculate the amount of area that is urbanized and non-urbanized area. Create two new fields that hold the amount of each area and calculate (transfer) the corresponding area into those new fields.
-
-Populating the AREA_URBN and AREA_NURB
-
 Task is to find how much area is urbanized and how is not urbanized
 
 For AREA_NURB
+Purpose: To select the attributes of a layer with condition.
 Tool: Select by Attributes
 Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
 Where: FID_new_england_urbanized_areas_2010_aeac84    is equal to -1
 
 Right click on the AREA_NURB > Calculate field
+Purpose: To calculate the values of a field for a feature class/feature layer or raster
 Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 * Use the selected records: 309 ( it shows how many rows got selected )
 * field name: AREA_NURB
 * Expression: AREA_NUMB = !shape_Area!
+* Output Description:
 * It populated the AREA_NURB with Shape_area values
 
-Till now -1 values of the field FID_new_england_urbanized_areas_2010_aeac84 are selected, the trick is to select **Switch** button. It selects all the values that are not -1.
+Trick to select the attributes
+The -1 values of the field FID_new_england_urbanized_areas_2010_aeac84 are selected, the trick is to select **Switch** button. It selects all the values that are not -1.
 - This step is useful to minimize select by attributes step.
 - ALl the values that are not -1 are selected, which represents the urbanized areas
 
 Right click on the AREA_URB > Calculate field
+Purpose: To calculate the values of a field for a feature class/feature layer or raster
 Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 * Use the selected records: 340 ( it shows how many rows got selected )
 * field name: AREA_URB
 * Expression: AREA_URB = !shape_Area!
+* Output Description:
 * It populated the AREA_URB with Shape_area values
 
 - We have populated the shape areas to both AREA_NUMB and AREA_URB, it left with nulls which needs to be taken care of
 - Nulls make create issue while doing any numerical analysis, they have to be changed to 0
 
 Tool: Select by Attributes
+Purpose: To select the attributes of a layer with condition.
 Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
 Where: AREA_URB  **is null**
+Output Description:
 - It selects the rows with null values
 
 Right click on the AREA_URB > Calculate field
+Purpose: To calculate the values of a field for a feature class/feature layer or raster
 Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 * Use the selected records: 309 ( it shows how many rows got selected )
 * field name: AREA_URB
 * Expression: AREA_URB = 0
+* Output Description:
 - It fills all the rows with nulls to 0 in the AREA_URB field
 
 * Repeat the same for AREA_NURB
@@ -112,7 +118,7 @@ Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 
 
 ### Summarize –i.e. aggregate by geography– the integrated township layer on the urbanized and non-urbanized area to create a table that contains one record for each township.
-
+Purpose: To calculate the summary statistics for fields in a table
 Tool: Summary Statistics
 Input table: new_england_urbanized_areas_townships_2010_aeac84_idty
 Ouput table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
@@ -120,8 +126,8 @@ Statistics fields:
 Field, Statistic type:  
 AREA_URB,   SUM
 AREA_NURB,   SUM
-
 Case field: TOWN
+Output Description:
 It groups all the rows with a common value and it calculated the sum of the statistic field
 For both the township and urbanized layer the common field is TOWN
 - Another observations, The output is not a shapefile but it is a table, so in the earlier techniques, they have input rows, input records, input field. So as per the type it requests.
@@ -133,29 +139,59 @@ The summarized area table can then be linked up (attribute join) to the Township
 
 ### Join
 Right click on mass_townships_2010_aeac84 and Click Add join
-
+Purpose: Joins a layer to another layer based on common field.
 Tool: Add Join
 Input field: TOWN
 Join Table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
 Join Field: TOWN 
 Check Keep all input records ( We want all the input township layer records and additionally the summary records)
-
+Output Description:
 - This method is done so that the urbanized and Unurbanized data for each town is added and it can be exported to another new layer, we can remove the joins and keep the orginal layer safe without any edits. Instead of this, if join field is done, it works like permanent join, the orginal layer will no layer remains orginal.
-- Once joined, the layer can be saved out to a new layer by
-EXPORTING the joined layer to an updated Township layer that includes the base
-Township layer and the additional joined fields from the area summarization table.
-Keep the base Township layer as a backup in the even the original layer is needed.
+  
 
 ### Exporting features
 Right click on the mass_townships_2010_aeac84 and choose Export features
+Purpose: To convert a feature class or feature layer to new feature class
 Tool: Export Features
 Input features: mass_townships_2010_aeac84
 Output features: mass_townships_2010_aeac84_s2
-
+- Other settings are mostly not used. 
+Output Description:
 - After exporting the township layer, I have removed all the joins. Now I have the new township layer with urbanized and unurbanized values for each town and my orginal township layer is safe with not edits.
 
 
 ### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
+
+
+Tool: Alter field
+Purpose: To rename fields and field aliases
+Input: mass_townships_2010_aeac84_s2
+Field name: SUM_ACERS
+New field name:ACRES_SQ
+Alias: ACRES_SQ
+
+Tool: Alter field
+Purpose: To rename fields and field aliases
+Input: mass_townships_2010_aeac84_s2
+Field name: SQUARE_ACERS
+New field name:ACRES_SQM
+Alias: ACRES_SQM
+
+Tool: Alter field
+Purpose: To rename fields and field aliases
+Input: mass_townships_2010_aeac84_s2
+Field name: FREQUENCY
+New field name: CNT_AREA_PIECES
+Alias: CNT_AREA_PIECES
+- Connected Pieces 
+Output Description:
+- It changes the name of the field and arranges to the same place. In the background, it creates a new field and copies the input field data and deletes the old field NEW FIELD AREA_SQM  DOUBLE Then calculates the field and adds the old data
+- SUM_ACERS is the total area of the polygon in Acers, SQUARE_ACERS is coversion of acers to miles
+
+Alternate Method for renaming:( It only works inthe new ArcPro versions )
+Click Add Field in the attribute table
+Change Name and its Alias of your desired field
+
 
 ### Data Cleaning
 
@@ -163,8 +199,22 @@ In the mass_townships_2010_aeac84_s2
 There are few redundant fields they are
 - objectid ( objectID is the software generated column created during joins and it is repeating )
 Initially there is a objectid in the orginal township layer, it is same to the OBJECTID_1 and another objectid which is joined from the summary table (new_england_urbanized_areas_townships_2010_aeac84_idty_smry)
-- Both the objectid's can be removed
-- 
+- Both the objectid's are removed.
+
+Open Attribute table
+- Right click on the desired field
+- Delete field
+Output Description:
+Be careful with deletion
+
+Usage of AI
+explained what analaysis I have done and asked to check which fields can be removed in layer. belew are its suggestions
+  - Duplicate identifiers
+  - Geometry-related auto-fields (like Shape_Length, Shape_Area) if they’re redundant
+  - Raw calculation fields used to create your summaries (e.g., area in square meters for each land parcel, intermediate ratios).
+  - Temporary join fields created during the overlay/union process (like FID_1, Join_Count, etc.
+
+
 
 
 
