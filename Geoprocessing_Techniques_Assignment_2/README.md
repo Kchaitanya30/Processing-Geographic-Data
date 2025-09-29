@@ -111,6 +111,62 @@ Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 
 
 
+### Summarize –i.e. aggregate by geography– the integrated township layer on the urbanized and non-urbanized area to create a table that contains one record for each township.
+
+Tool: Summary Statistics
+Input table: new_england_urbanized_areas_townships_2010_aeac84_idty
+Ouput table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
+Statistics fields:
+Field, Statistic type:  
+AREA_URB,   SUM
+AREA_NURB,   SUM
+
+Case field: TOWN
+It groups all the rows with a common value and it calculated the sum of the statistic field
+For both the township and urbanized layer the common field is TOWN
+- Another observations, The output is not a shapefile but it is a table, so in the earlier techniques, they have input rows, input records, input field. So as per the type it requests.
+- FREQUENCY: Number of polygons present in each township. The polygons will be Urbanized and Unurbanized
+
+### Join the summarized urban/non-urban area table to the Township layer and make the join permanent. 
+The summarized area table can then be linked up (attribute join) to the Township layer with the collision counts to provide a comparative context to contextualize the collision counts with the amount of area in a township that is urbanized and nonurbanize.
+
+
+### Join
+Right click on mass_townships_2010_aeac84 and Click Add join
+
+Tool: Add Join
+Input field: TOWN
+Join Table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
+Join Field: TOWN 
+Check Keep all input records ( We want all the input township layer records and additionally the summary records)
+
+- This method is done so that the urbanized and Unurbanized data for each town is added and it can be exported to another new layer, we can remove the joins and keep the orginal layer safe without any edits. Instead of this, if join field is done, it works like permanent join, the orginal layer will no layer remains orginal.
+- Once joined, the layer can be saved out to a new layer by
+EXPORTING the joined layer to an updated Township layer that includes the base
+Township layer and the additional joined fields from the area summarization table.
+Keep the base Township layer as a backup in the even the original layer is needed.
+
+### Exporting features
+Right click on the mass_townships_2010_aeac84 and choose Export features
+Tool: Export Features
+Input features: mass_townships_2010_aeac84
+Output features: mass_townships_2010_aeac84_s2
+
+- After exporting the township layer, I have removed all the joins. Now I have the new township layer with urbanized and unurbanized values for each town and my orginal township layer is safe with not edits.
+
+
+### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
+
+### Data Cleaning
+
+In the mass_townships_2010_aeac84_s2 
+There are few redundant fields they are
+- objectid ( objectID is the software generated column created during joins and it is repeating )
+Initially there is a objectid in the orginal township layer, it is same to the OBJECTID_1 and another objectid which is joined from the summary table (new_england_urbanized_areas_townships_2010_aeac84_idty_smry)
+- Both the objectid's can be removed
+- 
+
+
 
 
 
