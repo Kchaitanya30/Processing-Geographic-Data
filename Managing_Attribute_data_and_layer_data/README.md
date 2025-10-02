@@ -355,10 +355,17 @@ Output description: The result is all the ANGL filtered points are added to the 
 
 
 
+#### Exporting the crash layer 
+Firstly Export the existing layer ( mass_trac_crashes_2010_aeac84 ) and new version2 copy layer (mass_trac_crashes_2010_aeac84_v2)
 
+#### Delete field
+Input: mass_trac_crashes_2010_aeac84_v2
+Method: Delete fields
+Fields: Select all except: ID, towncity, MannerColl, MannerColl_ctgy
 
-
-
+Delete field
+urbanized_township_idty_crash_ctgy_Only
+delete all the fields that are attached from the crash layer
 
 
 
