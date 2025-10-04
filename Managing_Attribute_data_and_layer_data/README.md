@@ -348,20 +348,73 @@ Target features: new_england_urbanized_areas_townships_2010_aeac84_idty
 Join features: massTRAC_crashes2010
 Join operation: Join one to one
 match option: Intersect
-Output: urbanized_township_crash_sj
+Output: new_england_urbanized_areas_township_idty_massTrac_ANGL
+In the fields: Delete all the fields from join layer, except OBJECTID, ID, CityTown, MannerColl, Latitude, Longitude, MannerCol_ctgy
+-  From them OBJECTID and other fields felds can be removed later
 Output description: The result is all the ANGL filtered points are added to the polygon layer
 
 <img src="figures/pointpoly.png" alt="Alt text" width="400"/>
 
+In the output layer (new_england_urbanized_areas_township_idty_massTrac_ANGL)
+From attribute table, delete Target_FID it is the Objectid of the joined layer, which is redundant
+Change the name of the Join_count to CTN_ANGL
 
+#### Alter Field
+Purpose: To change the name of the field without changing its position in the table
+Input table: new_england_urbanized_areas_township_idty_massTrac_ANGL
+Field Name: Join_Count
+New field Name: CNT_ANGL
+New Field Alias;CNT_ANGL
+Output description: It changed the field name
+
+In the new_england_urbanized_areas_township_idty_massTrac_ANGL layer's Attribute table
+
+Add two new fields 
+#### Add Field
+Field Name: CNT_ANGL_URB  
+Alias: CNT_ANGL_URB  
+Data type: Double ( As the shape_Area will be added here and it has decimal numnbers)
+
+- Create another field named CNT_ANGL_NURB with same instructions
+
+#### Select by attributes
+Input Rows: new_england_urbanized_areas_township_idty_massTrac_ANGL
+Where: FID_new_england_urbanized_areas_2010_aeac84 
+is equal to: -1
+Outcome Description: It selects all the rows where FID_new_england_urbanized_areas_2010_aeac84 is -1 
+- It selects all the polygons that are Non-urbanized
+
+#### Calculate Field:
+- Right Click on CNT_ANGL_NURB and choose Calculate field
+- Input table: new_england_urbanized_areas_township_idty_massTrac_ANGL
+- Use the selected records: 309
+- Field Name: CNT_ANGL_NURB
+- Expression:
+- Then in it select CNT_ANGL_NURB = !CNT_ANGL!
+Outcome desciption: It populates all the values that are selected in the CNT_ANGL to the CNT_ANGL_NURB
+- By this the Count of ANGL collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ANGL_NURB and choose Calculate field
+- Input table: new_england_urbanized_areas_township_idty_massTrac_ANGL
+- Use the selected records: 340
+- Field Name: CNT_ANGL_URB
+- Expression:
+- Then in it select CNT_ANGL_URB = !CNT_ANGL!
+Output description: It populates the Count of collisions in the urbanized areas
+
+In the CNT_ANGL_NURB AND CNT_ANGL_URB there are Nulls, I have changed them to the 0 for calcualtion purposes.0
 
 #### Exporting the crash layer 
 Firstly Export the existing layer ( mass_trac_crashes_2010_aeac84 ) and new version2 copy layer (mass_trac_crashes_2010_aeac84_v2)
 
+
 #### Delete field
 Input: mass_trac_crashes_2010_aeac84_v2
 Method: Delete fields
-Fields: Select all except: ID, towncity, MannerColl, MannerColl_ctgy
+Fields: Select all except: ID, towncity, MannerColl, MannerColl_ctg
 
 Delete field
 urbanized_township_idty_crash_ctgy_Only
