@@ -225,7 +225,7 @@ explained what analaysis I have done and asked to check which fields can be remo
   - Raw calculation fields used to create your summaries (e.g., area in square meters for each land parcel, intermediate ratios).
   - Temporary join fields created during the overlay/union process (like FID_1, Join_Count, etc.
 
-
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ## Stage III - Spatially Aggregating Geographic Data
 
 ### Summary Statistics
@@ -373,7 +373,7 @@ Add two new fields
 #### Add Field
 Field Name: CNT_ANGL_URB  
 Alias: CNT_ANGL_URB  
-Data type: Double ( As the shape_Area will be added here and it has decimal numnbers)
+Data type: Double
 
 - Create another field named CNT_ANGL_NURB with same instructions
 
@@ -405,7 +405,326 @@ Outcome desciption: It populates all the values that are selected in the CNT_ANG
 - Then in it select CNT_ANGL_URB = !CNT_ANGL!
 Output description: It populates the Count of collisions in the urbanized areas
 
-In the CNT_ANGL_NURB AND CNT_ANGL_URB there are Nulls, I have changed them to the 0 for calcualtion purposes.0
+In the CNT_ANGL_NURB AND CNT_ANGL_URB there are Nulls, I have changed them to the -1 for calcualtion purposes.
+
+
+#### Spatial Join for ETED
+Input: new_england_urbanized_areas_township_idty_massTrac_ANGL
+Join: massTRAC_crashes2010
+Output: township_idty_massTrac_ANGL_ETED
+Match option: Intersect
+Fields: Remove all the fields from the join layer except ( ID_1, CityTown_1, Latitude_1, Longitude_1, MannerCol_ctgy_1)
+
+In the newly create layer, do the following edits
+Open attribute table
+
+#### Alter field:
+Purpose: To change the name of the field without changing its position in the table
+Input table: township_idty_massTrac_ANGL_ETED
+Field Name: Join_Count
+New field Name: CNT_ETED
+New Field Alias;CNT_ETED
+Output description: It changed the field name
+
+#### Add Field
+Field Name: CNT_ETED_URB  
+Alias: CNT_ETED_URB  
+Data type: Long
+Number Format: Numeric
+- Create another field named CNT_ETED_NURB with same instructions
+
+
+#### Calculate Field:
+- Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED
+- Use the selected records: 309
+- Field Name: CNT_ETED_NURB
+- Expression:
+- Then in it select CNT_ETED_NURB = !CNT_ETED!
+Outcome desciption: It populates all the values that are selected in the CNT_ETED to the CNT_ETED_NURB
+- By this the Count of ANGL collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED
+- Use the selected records: 340
+- Field Name: CNT_ETED_URB
+- Expression:
+- Then in it select CNT_ETED_URB = !CNT_ETED!
+Output description: It populates the Count of collisions in the urbanized areas
+
+
+
+#### Spatial Join for OTHR
+Input: township_idty_massTrac_ANGL_ETED
+Join: massTRAC_crashes2010_aeac84
+Output: township_idty_massTrac_ANGL_ETED_OTHR
+Match option: Intersect
+Fields: Remove all the fields from the join layer except ( ID_12, CityTown_12, Latitude_12, Longitude_12, MannerCol_ctgy_12)
+
+In the newly create layer, do the following edits
+Open attribute table
+
+#### Alter field:
+Purpose: To change the name of the field without changing its position in the table
+Input table: township_idty_massTrac_ANGL_ETED_OTHR
+Field Name: Join_Count
+New field Name: CNT_OTHR
+New Field Alias;CNT_OTHR
+Output description: It changed the field name
+
+#### Add Field
+Field Name: CNT_ETED_OTHR  
+Alias: CNT_ETED_OTHR  
+Data type: Long
+Number Format: Numeric
+- Create another field named CNT_OTHR_NURB with same instructions
+
+
+#### Calculate Field:
+- Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR
+- Use the selected records: 309
+- Field Name: CNT_OTHR_NURB
+- Expression:
+- Then in it select CNT_OTHR_NURB = !CNT_OTHR!
+Outcome desciption: It populates all the values that are selected in the CNT_OTHR to the CNT_OTHR_NURB
+- By this the Count of OTHR collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR
+- Use the selected records: 340
+- Field Name: CNT_OTHR_URB
+- Expression:
+- Then in it select CNT_OTHR_URB = !CNT_OTHR!
+Output description: It populates the Count of collisions in the urbanized areas
+
+
+#### Spatial Join for OTHR
+Input: township_idty_massTrac_ANGL_ETED
+Join: massTRAC_crashes2010_aeac84
+Output: township_idty_massTrac_ANGL_ETED_OTHR
+Match option: Intersect
+Fields: Remove all the fields from the join layer except ( ID_12, CityTown_12, Latitude_12, Longitude_12, MannerCol_ctgy_12)
+
+In the newly create layer, do the following edits
+Open attribute table
+
+#### Alter field:
+Purpose: To change the name of the field without changing its position in the table
+Input table: township_idty_massTrac_ANGL_ETED_OTHR
+Field Name: Join_Count
+New field Name: CNT_OTHR
+New Field Alias;CNT_OTHR
+Output description: It changed the field name
+
+#### Add Field
+Field Name: CNT_ETED_OTHR  
+Alias: CNT_ETED_OTHR  
+Data type: Long
+Number Format: Numeric
+- Create another field named CNT_OTHR_NURB with same instructions
+
+
+#### Calculate Field:
+- Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR
+- Use the selected records: 309
+- Field Name: CNT_OTHR_NURB
+- Expression:
+- Then in it select CNT_OTHR_NURB = !CNT_OTHR!
+Outcome desciption: It populates all the values that are selected in the CNT_OTHR to the CNT_OTHR_NURB
+- By this the Count of OTHR collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR
+- Use the selected records: 340
+- Field Name: CNT_OTHR_URB
+- Expression:
+- Then in it select CNT_OTHR_URB = !CNT_OTHR!
+Output description: It populates the Count of collisions in the urbanized areas
+
+
+
+
+#### Spatial Join for SSWP
+Input: township_idty_massTrac_ANGL_ETED
+Join: massTRAC_crashes2010_aeac84
+Output: township_idty_massTrac_ANGL_ETED_OTHR_SSWP
+Match option: Intersect
+Fields: Remove all the fields from the join layer except ( ID_12, CityTown_12, Latitude_12, Longitude_12, MannerCol_ctgy_12)
+
+In the newly create layer, do the following edits
+Open attribute table
+
+#### Alter field:
+Purpose: To change the name of the field without changing its position in the table
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP
+Field Name: Join_Count
+New field Name: CNT_SSWP
+New Field Alias;CNT_SSWP
+Output description: It changed the field name
+
+#### Add Field
+Field Name: CNT_SSWP_URB 
+Alias: CNT_SSWP_URB  
+Data type: Long
+Number Format: Numeric
+- Create another field named CNT_SSWP_NURB with same instructions
+
+
+#### Calculate Field:
+- Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP
+- Use the selected records: 309
+- Field Name: CNT_SSWP_NURB
+- Expression:
+- Then in it select CNT_SSWP_NURB = !CNT_SSWP!
+Outcome desciption: It populates all the values that are selected in the CNT_SSWP to the CNT_SSWP_NURB
+- By this the Count of OTHR collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP
+- Use the selected records: 340
+- Field Name: CNT_SSWP_URB
+- Expression:
+- Then in it select CNT_SSWP_URB = !CNT_SSWP!
+Output description: It populates the Count of collisions in the urbanized areas
+
+
+
+
+
+
+#### Spatial Join for SVHL
+Input: township_idty_massTrac_ANGL_ETED_OTHR_SSWP
+Join: massTRAC_crashes2010_aeac84
+Output: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Match option: Intersect
+Fields: Remove all the fields from the join layer except ( ID_12, CityTown_12, Latitude_12, Longitude_12, MannerCol_ctgy_12)
+
+In the newly create layer, do the following edits
+Open attribute table
+
+#### Alter field:
+Purpose: To change the name of the field without changing its position in the table
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: Join_Count
+New field Name: CNT_SVHL
+New Field Alias;CNT_SVHL
+Output description: It changed the field name
+
+#### Add Field
+Field Name: CNT_SVHL_URB 
+Alias: CNT_SVHL_URB  
+Data type: Long
+Number Format: Numeric
+- Create another field named CNT_SVHL_NURB with same instructions
+
+
+#### Calculate Field:
+- Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+- Use the selected records: 309
+- Field Name: CNT_SVHL_NURB
+- Expression:
+- Then in it select CNT_SVHL_NURB = !CNT_SVHL!
+Outcome desciption: It populates all the values that are selected in the CNT_SSWP to the CNT_SSWP_NURB
+- By this the Count of OTHR collisions that occured inthe Non urban areas is acquired
+
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+#### Calcualte Field
+ Right Click on CNT_ETED_NURB and choose Calculate field
+- Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+- Use the selected records: 340
+- Field Name: CNT_SVHL_URB
+- Expression:
+- Then in it select CNT_SVHL_URB = !CNT_SVHL!
+Output description: It populates the Count of collisions in the urbanized areas
+
+
+
+
+# II. Geo-processing Non-overlapping Collisions 
+
+#### Add field
+Layer: mass_trac_crashes_2010_aeac84
+Field name: Offland
+Alias: Offland
+Datatype: short
+Number format: Numeric
+output: It adds a new field called offland 
+
+In the newly added field there will be nulls
+#### Recode
+Right click on the Offland
+Calculate field:
+Input:  mass_trac_crashes_2010_aeac84
+Expression: Offland= 0
+Output description: The nulls inthe newly created field will be changed to 0
+
+#### Select by location
+input: mass_trac_crashes_2010_aeac84
+Relationship: Intersect
+Selecting Features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Check Invert Spatial Relationship
+Outcome description: It selects the points that are outside the polygons
+
+#### Calculate field
+Input table: mass_trac_crashes_2010_aeac84
+Use the selected records: 154
+Expression:
+Offland = 1
+Outcome description: It replaces the 0 with 1 in the selected rows for the Offland field.
+
+Save the off-land collisions to a separate layer because the geo-processing will be easier
+
+#### Export Crash points layer
+Input features: mass_trac_crashes_2010_aeac84
+output: mass_trac_crashes_2010_aeac84_Offland
+Output desciption: The result will be the layer with 154 rows 
+
+#### Near
+Input:  mass_trac_crashes_2010_aeac84_Offland
+Near features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Check location: it adds NEAR_X AND NEAR_Y to the table
+
+In the table there are lot of redundant fields
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #### Exporting the crash layer 
 Firstly Export the existing layer ( mass_trac_crashes_2010_aeac84 ) and new version2 copy layer (mass_trac_crashes_2010_aeac84_v2)
