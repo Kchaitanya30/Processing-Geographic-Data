@@ -701,24 +701,148 @@ Input:  mass_trac_crashes_2010_aeac84_Offland
 Near features: new_england_urbanized_areas_townships_2010_aeac84_idty
 Check location: it adds NEAR_X AND NEAR_Y to the table
 
-In the table there are lot of redundant fields
+#### IS_URBAN recoding
+#### Join table
+Input: new_england_urbanized_areas_township_2010_aeac84_idty
+Input field: OBJECTID_1
+Join table: mass_trac_crashes_2010_aeac84_Offland
+Join field: NEAR_FID
+Transfer fields:
+id, CityTown, Town, MannerColl, MannerCol_ctgy, Offland, IS_URBAN, NEAR_FID, NEAR_DIST
 
 
+In the integrated layer ( new_england_urbanized_areas_township_2010_aeac84_idty )
+Calcualte field on field IS_URBAN
+Expression: 
+IS_URBAN = Offland
+
+#### Defination query
+IS_URBAN is equal to 1 
+and
+Fid_new_england_urbanized_areas_2010_aeac84 equals to -1
+
+Outcome: It selects all the polygons that are unrbanized and points that are falling in the Offland
+
+It selects few rows
+For the IS_URBAN
+Calcualte Field 
+IS_URBAN = 2
+
+outcome description: It Recodes the IS_URBAN field with 2 for Oflland collisions that occurred near a township area that was non-urban, and 1 for a offland collision that occurred near an urban township area. In the assignment description 0 for the non-urban areas but there are null values inthe field, they are changed to 0. 
 
 
+#### Joining IS_URBAN field to the Offland layer
+Tool: Join Field
+Input table: mass_trac_crashes_2010_aeac84_Offland
+Input field: NEAR_FID
+Join table:new_england_urbanized_areas_township_2010_aeac84_idty
+Join field: OBJECT_ID
+Transfer fields: IS_URBAN
+Outcome descirption: It joins the IS_URBAN field to the mass_trac_crashes_2010_aeac84_Offland point layer which is useful for the next analysis
+
+## III. Summarizing and Adding the Additional Data to the Townships
+
+Tool: Summary Statistics
+Input table: mass_trac_crashes_2010_aeac84_Offland
+Output table: mass_trac_crashes_2010_aeac84_Offland_smry
+Statistics fields: 
+Field: MannerCol_ctg    Statistic Type: Count
+Case Field:
+NEAR_FID, IS_URBAN, CityTown, MannerCol_ctgy
+Outcome desciption: It gives a summary with count of Different MannerCor_ctgy collisions in the offland locations. Apart from that I have used CityTown, IS_URBAN( URBAN is 1 and Non-Urban is 2) and it also has NEAR_FID to join the count to the other layers. For this summary Count statistic type is choosen to get the count of the collision for each Collision category. It has 57 rows because I have used CityTown layer so that it is classified accordingly.
+
+###### summary statistics
+Tool: Summary Statistics
+Input table: mass_trac_crashes_2010_aeac84_Offland
+Output table: mass_trac_crashes_2010_aeac84_Offland_smry2
+Statistics fields: 
+Field: MannerCol_ctg   Statistic Type: Count
+Case Field:
+NEAR_FID, MannerCol_ctgy
+Outcome description: In this summary I have got 56 rows, as I have used just 2 case fields by which the count is grouped. 
+
+The summarized table, though, still is not ready for linking up to the integrated township and urbanized area layer. There are multiple records for several townships, as well as multiple records for each of the township area types. This table is in a format called “vertical” or “long” data, to which there are multiple records per a specific value or unique Id that usually is associated with a varying set of values. That specific value or Id in this instance is the township pieces and varying set of values are the urban and non-urban geographies by township. To link with the integrated township layer, the data need to be converted into a format called “horizontal” or “wide” data, to which those varying values per the specific value or Id are converted into new columns, one column for each of the varying values. The data need to be converted into this format because there must be one record for each township and urbanized/non-urbanized polygon for a one-to-one join so that the collision groups or categories can be added to the on-land counts.
 
 
+####  Pivoting (Transposing) the Summarized Off-land Collison Counts
+
+Tool: Pivot table
+Input table: mass_trac_crashes_2010_aeac84_Offland_smry
+Input fields: IS_URBAN, CityTown, NEAR_FID
+Pivot Field: MannerCol_ctgy
+Value Field: FREQUENCY
+output table: mass_trac_crashes_2010_aeac84_Offland_pvt
+outcome description: 
+
+Coverting Null inthe fields to 0 for calculation
+Select by attributes
+I have selected only nulls in the ANGL, ETED, SSWP, SVHL, OTHR fields and using calculate field I have given 0 to them.
+
+#### Add Join
+Input: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Input field: OBJECTID_1
+Join table: mass_trac_crashes_2010_aeac84_Offland_pvt
+Join field: NEAR_FID
+Outcome description: It is temporary join which will be used to count the final count of the collision category
+
+Create 5 New fields in the integrated layer
+Layer: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+New field: TOTAL_CNT_ANGL     LONG    NUMERIC
+New field: TOTAL_CNT_ETED     LONG    NUMERIC
+New field: TOTAL_CNT_SSWP     LONG    NUMERIC
+New field: TOTAL_CNT_SVHL     LONG    NUMERIC
+New field: TOTAL_CNT_OTHR     LONG    NUMERIC
+
+Calculate field and covert all the Null's inthe fields to 0 for calculation purposes
+
+#### Populate the total values
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_ANGL
+Expression:
+TOTAL_CNT_ANGL = !CNT_ANGL! + !ANGL!
+Outcome: It gives the total value of the collision inthe polygons and offland for ANGL collision
+
+It gave me the error 
+WARNING 002858: Certain rows set to NULL due to error while evaluating python expression: typeError: unsupported operand type +: and 'NoneType'
+- checked in the chatgpt, it says that this is a common ArcPro error, adds that one of the field has null in it, I have rechecked the both the fields both fields have no nulls. Not sure about this error
+
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_OTHR
+Expression:
+TOTAL_CNT_OTHR = !CNT_OTHR! + !OTHR!
+Outcome: It gives the total value of the collision inthe polygons and offland for OTHR collision
 
 
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_ETED
+Expression:
+TOTAL_CNT_ETED = !CNT_ETED! + !ETED!
+Outcome: It gives the total value of the collision inthe polygons and offland for ETED collision
 
 
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_SSWP
+Expression:
+TOTAL_CNT_SSWP = !CNT_SSWP! + !SSWP!
+Outcome: It gives the total value of the collision inthe polygons and offland for SSWP collision
 
 
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_SVHL
+Expression:
+TOTAL_CNT_SVHL = !CNT_SVHL! + !SVHL!
+Outcome: It gives the total value of the collision inthe polygons and offland for SVHL collision
 
-
-
-
-
+#### Remove all joins
+Purpose: Once the calculation is done, join field should be removed as it is not longer useful
+Right click on the township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Joins and Relates: Remove all Joins
+Outcome description: It removes all the pivot table joins from the final integrated urbanized layer
 
 
 
@@ -738,10 +862,6 @@ Fields: Select all except: ID, towncity, MannerColl, MannerColl_ctg
 Delete field
 urbanized_township_idty_crash_ctgy_Only
 delete all the fields that are attached from the crash layer
-
-
-
-
 
 
 
