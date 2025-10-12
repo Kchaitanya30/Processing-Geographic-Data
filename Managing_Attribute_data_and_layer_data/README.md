@@ -226,6 +226,23 @@ explained what analaysis I have done and asked to check which fields can be remo
   - Temporary join fields created during the overlay/union process (like FID_1, Join_Count, etc.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+## Assignment-3: Creating New Attributes & Transferring Geographic Data across Layers
+Student Name: Krishna C. Mummadi
+Date: 10/05/2025
+### Objective
+In this assignment, using the layers from previous tasks, I will be aggregating collision category counts based on urban and non-urban areas. The goal is to also identify and count offland collisions. This process involves data cleaning, spatial joins, and analytical operations to transform the data into a clean usable form for spatial analysis.
+
+#### Original Data Used
+mass_trac_crashes_2010_aeac84 
+Source: Massachusetts Registry of Motor Vehicles (RMV)
+Description: The Crash records for Massachusetts, the data is broken down into Crashes, Vehicles and Persons (Drivers, Passengers and Non- Motorists) datasets.
+ 
+new_england_urbanized_areas_township_idty
+Source: Massachusetts Traffic Records Analysis Center (MassTRAC)
+Description: This layer is one of the outputs of the assignment 2, It is an integrated layer containing the Massachusetts township and urbanized polygon data.
+
+
+
 ## Stage III - Spatially Aggregating Geographic Data
 
 ### Summary Statistics
@@ -235,7 +252,7 @@ Field: Mannercoll
 Statistic type: Count
 Case field: Mannercoll
 Output: mass_trac_crashes_2010_aeac84_smry
-Output description: It works like group by case field and give me the count of the each grouped field value
+Output Description: This tool groups the data by the case field and provides the total count for each unique value in the Mannercoll field.
 
 
 ### Recoding of data 
@@ -246,46 +263,54 @@ c. Single Vehicle (Single Vehicle, Not Collision Between two Vehicles in traffic
 d. End to End (Head On, Rear End, Rear-to-Rear);
 e. Unknown (Unknown, Reported but invalid, Not Reported, Missing)
 
-#### Add field
-Add field:
-Purpose: To Add a field in the attribute table
-Field name: MannerColl_ctgy  
-Alias: MannerColl_ctgy  
-Data Type: Text 
-Length: 6( Give max number you think)
+#### Adding a Field to Store Short Codes for Collision Types
+Purpose: To add a new field to the attribute table for storing short values representing collision types
+Tool: Add Field
+Layer: mass_trac_crashes_2010_aeac84
+Tool: Add Field
+Purpose: To add a new field to the attribute table.
+Field Name: MannerColl_ctgy
+Alias: MannerColl_ctgy
+Data Type: Text
+Length: 6 (assign the maximum number considered suitable)
+Output Description: A new text field named MannerColl_ctgy is added to the attribute table, which will be used to store short codes for each collision type.
+For the series of steps done for 5 collision types, the steps are mentioned for each collision type. These steps will be repeated under the thick line below.
 
+### For Recoding ANGL
 #### Select by attributes
-Tool: Select by attributes 
-Purpose: To select all the desired rows in the columns
+Purpose: To select all desired rows within the specified column.
+Tool: Select by Attributes
+Purpose: To select all desired rows within the specified column.
 Input: mass_trac_crashes_2010_aeac84
-Where: MannerColl   is equal   Angle
-Output description: It selected all the rows inthe MannerColl which has the value angle
-- In select by attributes ( For selecting single value choose “is equal” and for multiple values choose “include” )
+Where: MannerColl is equal to Angle
+Output Description: Selects all rows in the MannerColl field where the value is Angle.
+Note: Use “is equal to” when selecting a single value and “includes” when selecting multiple values.
 
 #### Calculate field
 Input: mass_trac_crashes_2010_aeac84
 Check: use the selected rows: 31631
 Field name: MannerCol_ctgy
 Expression: MannerCol_ctgy = "ANGL"
-Output description: It populates are the selected rows with ANGl text
-- In calculate field while giving name choose quotes “ “  as it is a text
+Output Description: Populates all selected rows in the MannerColl_ctgy field with the text ANGL.
+Note: When entering text values in the expression, enclose them in quotation marks since the field type is text.
 
-
+#### For Recoding SVHL
 #### Select by attributes
-Tool: Select by attributes 
-Purpose: To select all the desired rows in the columns
+Tool: Select by Attributes
+Purpose: To select all the desired rows within the specified column.
 Input: mass_trac_crashes_2010_aeac84
-Where: MannerColl   Includes the value(s)   Single Vehicle, Not Collision Between two Vehicles in traffic
-Output description: It selected all the rows inthe MannerColl which has the values  Single Vehicle, Not Collision Between two Vehicles in traffic
+Where: MannerColl includes the values Single Vehicle, Not Collision Between Two Vehicles in Traffic
+Output Description: Selects all rows in the MannerColl field that contain the values Single Vehicle and Not Collision Between Two Vehicles in Traffic.
+
 
 #### Calculate field
 Input: mass_trac_crashes_2010_aeac84
-Check: use the selected rows: 23409
-Field name: MannerCol_ctgy
-Expression: MannerCol_ctgy = "SVHL"
-Output description: It populates are the selected rows with SVHL text
+Check: Use the selected rows (23,409)
+Field Name: MannerColl_ctgy
+Expression: MannerColl_ctgy = SVHL
+Output Description: Populates all selected rows in the MannerColl_ctgy field with the text SVHL.
 
-
+#### For Recoding SSWP
 #### Select by attributes
 Tool: Select by attributes 
 Purpose: To select all the desired rows in the columns
@@ -295,12 +320,12 @@ Output description: It selected all the rows inthe MannerColl which has the valu
 
 #### Calculate field
 Input: mass_trac_crashes_2010_aeac84
-Check: use the selected rows: 12709
-Field name: MannerCol_ctgy
-Expression: MannerCol_ctgy = "SSWP"
-Output description: It populates are the selected rows with SVHL text
+Check: Use the selected rows (12,709)
+Field Name: MannerColl_ctgy
+Expression: MannerColl_ctgy = SSWP
+Output Description: Populates all selected rows in the MannerColl_ctgy field with the text SSWP.
 
-
+#### For Recoding ETED
 #### Select by attributes
 Tool: Select by attributes 
 Purpose: To select all the desired rows in the columns
@@ -313,9 +338,10 @@ Input: mass_trac_crashes_2010_aeac84
 Check: use the selected rows: 35213
 Field name: MannerCol_ctgy
 Expression: MannerCol_ctgy = "ETED"
-Output description: It populates are the selected rows with ETED text
+Output Description: Populates all selected rows in the MannerColl_ctgy field with the text ETED.
 
 
+#### For Recoding OTHR
 #### Select by attributes
 Tool: Select by attributes 
 Purpose: To select all the desired rows in the columns
@@ -335,23 +361,24 @@ Now the recoding is done, A new field with clear values are added. The next step
 - Mask the data and make only visible the observations that are required
 
 #### Defination query
-Purpose: The locations  need to be separated so that the types are processed individually 
-From the layer Table of Contents, the properties option is selected to bring up the dialog box. In it choose New defination query
-Where MannerCol_ctgy   is equal to   ANGL
-
-Once the Definition Query has been specified, the locations need to be aggregated (spatially joined). 
-Aggregate the individual and collision group types with a SPATIAL JOIN from the massTRAC_crashes2010 layer to the integrated township and urbanized area layer (new_england_urbanized_areas_townships_2010_aeac84_idty)
+Purpose: To separate the locations so that each collision type can be processed individually.
+Procedure: From the Layer Table of Contents, select the Properties option to open the dialog box. In it, choose New Definition Query.
+Where: MannerColl_ctgy is equal to ANGL
+Outcome Description: Filters and displays only the records corresponding to the ANGL collision type.
+Once the Definition Query has been applied, the selected locations need to be aggregated using a spatial join.
+Aggregate the individual and grouped collision types with a Spatial Join from the massTRAC_crashes2010 layer to the integrated township and urbanized area layer (new_england_urbanized_areas_townships_2010_aeac84_idty).
 
 ### Spatial Join
-Purpose: To join the township_and_urbanized layer to the crash points. This executes a “point-in-polygon” operation that creates a count of all the locations within each township polygon
-Target features: new_england_urbanized_areas_townships_2010_aeac84_idty
-Join features: massTRAC_crashes2010
-Join operation: Join one to one
-match option: Intersect
+Purpose: To join the township_and_urbanized layer with the crash points. This operation performs a point-in-polygon process that calculates the count of all crash locations within each township polygon.
+Target Features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Join Features: massTRAC_crashes2010
+Join Operation: Join one to one
+Match Option: Intersect
 Output: new_england_urbanized_areas_township_idty_massTrac_ANGL
-In the fields: Delete all the fields from join layer, except OBJECTID, ID, CityTown, MannerColl, Latitude, Longitude, MannerCol_ctgy
--  From them OBJECTID and other fields felds can be removed later
-Output description: The result is all the ANGL filtered points are added to the polygon layer
+Field Selection: Delete all fields from the join layer except OBJECTID, ID, CityTown, MannerColl, Latitude, Longitude, and MannerCol_ctgy. OBJECTID and other redundant fields can be removed later if needed.
+Output Description: The resulting layer contains all ANGL-filtered crash points joined with the township polygons.
+From attribute table, delete Target_FID it is the Objectid of the joined layer, which is redundant
+
 
 <img src="figures/pointpoly.png" alt="Alt text" width="400"/>
 
@@ -365,24 +392,27 @@ Input table: new_england_urbanized_areas_township_idty_massTrac_ANGL
 Field Name: Join_Count
 New field Name: CNT_ANGL
 New Field Alias;CNT_ANGL
-Output description: It changed the field name
+Output Description: The field name was successfully changed to CNT_ANGL.
+
 
 In the new_england_urbanized_areas_township_idty_massTrac_ANGL layer's Attribute table
 
 Add two new fields 
 #### Add Field
-Field Name: CNT_ANGL_URB  
-Alias: CNT_ANGL_URB  
-Data type: Double
+Tool: Add Field
+Purpose: To create new fields in the attribute table for storing counts of urban and non-urban collisions.
+Field Name: CNT_ANGL_URB
+Alias: CNT_ANGL_URB
+Data Type: Double
+Create another field named CNT_ANGL_NURB using the same parameters.
 
-- Create another field named CNT_ANGL_NURB with same instructions
-
+####  Calculating ANGL Collision Counts for Urban and Non-Urban Areas
 #### Select by attributes
+Purpose: To isolate polygons representing non-urbanized areas.
 Input Rows: new_england_urbanized_areas_township_idty_massTrac_ANGL
-Where: FID_new_england_urbanized_areas_2010_aeac84 
-is equal to: -1
-Outcome Description: It selects all the rows where FID_new_england_urbanized_areas_2010_aeac84 is -1 
-- It selects all the polygons that are Non-urbanized
+Where: FID_new_england_urbanized_areas_2010_aeac84 is equal to -1
+Outcome Description: Selects all rows where FID_new_england_urbanized_areas_2010_aeac84 equals -1, identifying polygons that represent non-urbanized areas.
+
 
 #### Calculate Field:
 - Right Click on CNT_ANGL_NURB and choose Calculate field
@@ -407,7 +437,8 @@ Output description: It populates the Count of collisions in the urbanized areas
 
 In the CNT_ANGL_NURB AND CNT_ANGL_URB there are Nulls, I have changed them to the -1 for calcualtion purposes.
 
-
+** In the same way, the process is carried out for the remaining collision types. The procedure is repetitive and follows the same sequence of steps. The detailed process for each collision type is provided below, under the thick lines. **
+ 
 #### Spatial Join for ETED
 Input: new_england_urbanized_areas_township_idty_massTrac_ANGL
 Join: massTRAC_crashes2010
@@ -424,7 +455,7 @@ Input table: township_idty_massTrac_ANGL_ETED
 Field Name: Join_Count
 New field Name: CNT_ETED
 New Field Alias;CNT_ETED
-Output description: It changed the field name
+Output description: The field name was changed successfully.
 
 #### Add Field
 Field Name: CNT_ETED_URB  
@@ -657,7 +688,10 @@ Output description: It populates the Count of collisions in the urbanized areas
 
 
 
-# II. Geo-processing Non-overlapping Collisions 
+## II. Geo-processing Non-overlapping Collisions 
+
+Identification of Off-Land Collisions
+In the data, there are a few collisions that occurred off the land or outside the polygon data, such as bridges. Even that data is important. Below are the steps to identify the collisions that happened off-land and assign their nearest polygon information to add to the total count.
 
 #### Add field
 Layer: mass_trac_crashes_2010_aeac84
@@ -668,6 +702,7 @@ Number format: Numeric
 output: It adds a new field called offland 
 
 In the newly added field there will be nulls
+
 #### Recode
 Right click on the Offland
 Calculate field:
@@ -692,16 +727,21 @@ Outcome description: It replaces the 0 with 1 in the selected rows for the Offla
 Save the off-land collisions to a separate layer because the geo-processing will be easier
 
 #### Export Crash points layer
+Purpose: To create a new layer containing only the off-land collision points for easier geoprocessing.
 Input features: mass_trac_crashes_2010_aeac84
 output: mass_trac_crashes_2010_aeac84_Offland
-Output desciption: The result will be the layer with 154 rows 
+Output Description: The result will be a layer with 154 rows representing off-land collision points.
 
 #### Near
+Purpose: To identify the nearest polygon for each off-land collision point and record its location coordinates.
 Input:  mass_trac_crashes_2010_aeac84_Offland
 Near features: new_england_urbanized_areas_townships_2010_aeac84_idty
 Check location: it adds NEAR_X AND NEAR_Y to the table
+Output Description: Adds NEAR_X and NEAR_Y fields to the attribute table, representing the coordinates of the nearest polygon.
 
-#### IS_URBAN recoding
+#### Recoding the IS_URBAN field 
+Purpose: To segregate collision points into urbanized and non-urbanized categories by creating an IS_URBAN field and assigning each record to its respective area based on proximity and characteristics.
+
 #### Join table
 Input: new_england_urbanized_areas_township_2010_aeac84_idty
 Input field: OBJECTID_1
@@ -712,26 +752,31 @@ id, CityTown, Town, MannerColl, MannerCol_ctgy, Offland, IS_URBAN, NEAR_FID, NEA
 
 
 In the integrated layer ( new_england_urbanized_areas_township_2010_aeac84_idty )
-Calcualte field on field IS_URBAN
-Expression: 
-IS_URBAN = Offland
+
+#### Calcualte field on field IS_URBAN
+Layer: new_england_urbanized_areas_township_2010_aeac84_idty
+Field: IS_URBAN
+Expression: IS_URBAN = Offland
+Output Description: Assigns Offland values to the IS_URBAN field for classification purposes.
+
 
 #### Defination query
 IS_URBAN is equal to 1 
 and
 Fid_new_england_urbanized_areas_2010_aeac84 equals to -1
 
-Outcome: It selects all the polygons that are unrbanized and points that are falling in the Offland
+Outcome Description: Selects polygons representing urbanized areas and the points falling in the Offland regions.
 
 It selects few rows
 For the IS_URBAN
 Calcualte Field 
 IS_URBAN = 2
 
-outcome description: It Recodes the IS_URBAN field with 2 for Oflland collisions that occurred near a township area that was non-urban, and 1 for a offland collision that occurred near an urban township area. In the assignment description 0 for the non-urban areas but there are null values inthe field, they are changed to 0. 
+Outcome Description: Recodes the IS_URBAN field with a value of 2 for Offland collisions near non-urban township areas and retains 1 for those near urban townships. Null values are converted to 0 to represent non-urban areas.
 
 
 #### Joining IS_URBAN field to the Offland layer
+Purpose: To attach the IS_URBAN classification from the polygon layer to the Offland collision point layer for further analysis.
 Tool: Join Field
 Input table: mass_trac_crashes_2010_aeac84_Offland
 Input field: NEAR_FID
@@ -741,6 +786,7 @@ Transfer fields: IS_URBAN
 Outcome descirption: It joins the IS_URBAN field to the mass_trac_crashes_2010_aeac84_Offland point layer which is useful for the next analysis
 
 ## III. Summarizing and Adding the Additional Data to the Townships
+Purpose: To incorporate the Offland collision data identified in previous steps into the integrated final layer for determining the total count of each collision category.
 
 Tool: Summary Statistics
 Input table: mass_trac_crashes_2010_aeac84_Offland
@@ -751,7 +797,8 @@ Case Field:
 NEAR_FID, IS_URBAN, CityTown, MannerCol_ctgy
 Outcome desciption: It gives a summary with count of Different MannerCor_ctgy collisions in the offland locations. Apart from that I have used CityTown, IS_URBAN( URBAN is 1 and Non-Urban is 2) and it also has NEAR_FID to join the count to the other layers. For this summary Count statistic type is choosen to get the count of the collision for each Collision category. It has 57 rows because I have used CityTown layer so that it is classified accordingly.
 
-###### summary statistics
+###### Summary statistics
+Purpose: To summarize the offland collision data by counting the number of collisions for each collision category and township (NEAR_FID), preparing it for integration with the main township layer.
 Tool: Summary Statistics
 Input table: mass_trac_crashes_2010_aeac84_Offland
 Output table: mass_trac_crashes_2010_aeac84_Offland_smry2
@@ -761,29 +808,36 @@ Case Field:
 NEAR_FID, MannerCol_ctgy
 Outcome description: In this summary I have got 56 rows, as I have used just 2 case fields by which the count is grouped. 
 
-The summarized table, though, still is not ready for linking up to the integrated township and urbanized area layer. There are multiple records for several townships, as well as multiple records for each of the township area types. This table is in a format called “vertical” or “long” data, to which there are multiple records per a specific value or unique Id that usually is associated with a varying set of values. That specific value or Id in this instance is the township pieces and varying set of values are the urban and non-urban geographies by township. To link with the integrated township layer, the data need to be converted into a format called “horizontal” or “wide” data, to which those varying values per the specific value or Id are converted into new columns, one column for each of the varying values. The data need to be converted into this format because there must be one record for each township and urbanized/non-urbanized polygon for a one-to-one join so that the collision groups or categories can be added to the on-land counts.
+The summarized table is in a “vertical” format (multiple records for each unique ID). To join it with the integrated township layer, the data must be converted to a “horizontal” format, where each unique township has one record with separate columns for each collision category. 
+ 
+
 
 
 ####  Pivoting (Transposing) the Summarized Off-land Collison Counts
-
+Purpose: To convert the summarized offland collision data from a vertical (long) format to a horizontal (wide) format for easier integration with township data.
 Tool: Pivot table
 Input table: mass_trac_crashes_2010_aeac84_Offland_smry
 Input fields: IS_URBAN, CityTown, NEAR_FID
 Pivot Field: MannerCol_ctgy
 Value Field: FREQUENCY
 output table: mass_trac_crashes_2010_aeac84_Offland_pvt
-outcome description: 
+Outcome description:
+The result is a transposed table where each collision category becomes a separate column, showing counts of offland collisions by township and urbanization type.
 
 Coverting Null inthe fields to 0 for calculation
 Select by attributes
 I have selected only nulls in the ANGL, ETED, SSWP, SVHL, OTHR fields and using calculate field I have given 0 to them.
+
+#### Joining the Pivot table to the Integrated layer
+Purpose: To temporarily join the pivoted offland collision data to the integrated township layer for calculating the final count of each collision category.
 
 #### Add Join
 Input: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
 Input field: OBJECTID_1
 Join table: mass_trac_crashes_2010_aeac84_Offland_pvt
 Join field: NEAR_FID
-Outcome description: It is temporary join which will be used to count the final count of the collision category
+Outcome description:
+This creates a temporary join that allows the calculation of the total collision counts for each collision category by combining on-land and offland data.
 
 Create 5 New fields in the integrated layer
 Layer: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
@@ -801,11 +855,14 @@ Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
 Field Name: TOTAL_CNT_ANGL
 Expression:
 TOTAL_CNT_ANGL = !CNT_ANGL! + !ANGL!
-Outcome: It gives the total value of the collision inthe polygons and offland for ANGL collision
-
-It gave me the error 
+Outcome description:
+This step calculates the total number of ANGL collisions, combining polygon (on-land) and offland values. However, an error occurred during execution, which needs to be reviewed before proceeding.
 WARNING 002858: Certain rows set to NULL due to error while evaluating python expression: typeError: unsupported operand type +: and 'NoneType'
-- checked in the chatgpt, it says that this is a common ArcPro error, adds that one of the field has null in it, I have rechecked the both the fields both fields have no nulls. Not sure about this error
+- checked in the chatgpt, it says that this is a common ArcPro error, adds that one of the fields has null in it, I have rechecked both the fields and both fields have no nulls. Not sure about this error
+
+
+#### Calculating the total individual collision type count including the offland 
+Purpose: To calculate the total count of individual collision types, including both on-land and off-land data.
 
 Tool: Calculate field
 Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
@@ -839,29 +896,75 @@ TOTAL_CNT_SVHL = !CNT_SVHL! + !SVHL!
 Outcome: It gives the total value of the collision inthe polygons and offland for SVHL collision
 
 #### Remove all joins
-Purpose: Once the calculation is done, join field should be removed as it is not longer useful
-Right click on the township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
-Joins and Relates: Remove all Joins
-Outcome description: It removes all the pivot table joins from the final integrated urbanized layer
+Purpose: To remove all joins after completing the calculations, as they are no longer needed.
+Right-click on: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Select: Joins and Relates → Remove All Joins
+Outcome description: It removes all pivot table joins from the final integrated urbanized layer, ensuring the dataset remains clean and optimized for further analysis.
 
 
 
+Data cleaning:
+To clean up the attribute table by removing redundant and repetitive fields that are no longer required after data integration and processing.
+In the layer: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Remove the following fields:
+TARGETFID
+OBJECTID (from joins)
+CityTown (from joins)
+MannerColl
+Latitude and Longitude
+MannerCol_ctgy
+Shapearea(Blank)
+ID 
+Outcome description: This retains only relevant fields, ensuring efficiency and clarity for final analysis.
 
 
+#### Final Data Inventory
+township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL :
+- description: This is the final integrated layer where spatial joins for all five collision types are completed, and the off-land counts are added. It includes CNT_URB and CNT_NURB fields for each collision category.
+- source: Massachusetts Traffic Records Analysis Center (MassTRAC)
+- number of features: 649
+
+mass_trac_crashes_2010_aeac84_Offland:
+- Description: This layer contains the  Offland collision point data that occurred off the land areas.
+- NEAR_FID (useful to join with integrated layer), 
+- CityTown: For summary to know which Town the collision belongs to
+- MannerCol_ctgy: Category type of the collision
+- Offland: This field has a value of 1, indicating that the collision occurred off land.
+- IS_URBAN: This field identifies whether the nearest polygon to the collision point is Urban or Non-Urban. Urban areas are represented by 1, and Non-Urban areas are represented by 2. This information is useful for performing summaries and analyses.
+- Source: Massachusetts Registry of Motor Vehicles (RMV)
+- Number of features: 154
+
+mass_trac_crashes_2010_aeac84:
+- Description: This layer contains Massachusetts crash data. The MannerCol_ctgy field represents the categorized or aggregated type of collision, while the Offland field identifies points located outside the township polygons.
+- Source: Massachusetts Registry of Motor Vehicles (RMV)
+- Number of features: 1,06,598
+
+mass_trac_crashes_2010_aeac84_Offland_smry2:  Table
+- Description: This table summarizes the count of all collision categories, organized by NEAR_FID and MannerCol_ctgy.
+- Source: Massachusetts Registry of Motor Vehicles (RMV)
+- Number of features: 56
+
+mass_trac_crashes_2010_aeac84_Offland_smry: 
+- Description: In this summary is grouped by CityTown, IS_URBAN and MannorCol_ctgy. It helps identify the collision locations and determine whether each location is urban or non-urban, along with the count of collisions.
+- Source: Massachusetts Registry of Motor Vehicles (RMV)
+- Number of features: 57
+
+mass_trac_crashes_2010_aeac84_Offland: Table
+- Description: The collision data has been transposed from a single vertical column into individual columns. This structure helps in understanding the crash count along with its corresponding NEAR_FID and Town.
+- Source: Massachusetts Registry of Motor Vehicles (RMV)
+- Number of features: 31
+
+** Apart from them the sandbox has other layer and tables which are formed during spatial joins and from tables, layers previous tasks. There is a duplicate for the final layer for backup. Kindly ignore them. **
+
+Results
+The final dataset is an integrated layer containing both township and urbanized polygons. Its attribute table combines information from both layers. In addition, it includes counts of all collision types, counts for urban and non-urban areas, and the final totals for each crash category.
+The dataset was cleaned by removing redundant and unnecessary fields. Determining the IS_URBAN field to classify whether the offland points were urbanized or non-urbanized was somewhat challenging, but its summary provided valuable insights.
+This analysis meets the objective of identifying the counts of all collision types and categorizing them by area. It is useful for analyzing where collisions occur most frequently in both urban and non-urban areas, what types of collisions are most common, and which towns have the highest or lowest numbers. This helps in detecting spatial patterns or statistical significance, and the data can be overlaid with traffic and route information to find potential alternative solutions. Overall, this was a valuable exercise to extract, organize, and optimize the data for efficient analysis.
 
 
 #### Exporting the crash layer 
 Firstly Export the existing layer ( mass_trac_crashes_2010_aeac84 ) and new version2 copy layer (mass_trac_crashes_2010_aeac84_v2)
 
-
-#### Delete field
-Input: mass_trac_crashes_2010_aeac84_v2
-Method: Delete fields
-Fields: Select all except: ID, towncity, MannerColl, MannerColl_ctg
-
-Delete field
-urbanized_township_idty_crash_ctgy_Only
-delete all the fields that are attached from the crash layer
 
 
 
