@@ -31,7 +31,11 @@ Complete the geo-processing of the Massachusetts ZIP Code Tabulation Areas (ZCTA
 
 ### Geo-Process the ZCTA layer match the Massachusetts Township Layer
 
+Clip
 
+Input: mass_zctas_2010_aeac84
+Clip features: mass_townships_2010_aeac84
+Output: mass_zctas_2010_aeac84_c1
 
 
 
