@@ -20,4 +20,34 @@ mass_townships_2010_aeac84
 
 mass_state_2010_aeac84
 
+## Tasks
+Complete the geo-processing of the Massachusetts ZIP Code Tabulation Areas (ZCTA) layer that was geometrically matched to the Township layer. The geo- processing of this single layer uses several tools and follows the method demonstrated in class. The final results with be a production ready ZCTA layer that contains the 
+(i) urbanized & non-urbanized areas, 
+(ii) five collision group counts, 
+(iii) and road lengths, with each of ii and iii be by urbanized and non-urbanized area
+
+
+## Part I: Integrating Geographies and Calculating Area Types
+
+### Geo-Process the ZCTA layer match the Massachusetts Township Layer
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
