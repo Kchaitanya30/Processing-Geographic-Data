@@ -20,16 +20,16 @@ first stage. In this first stage data are collected by either creating the data 
 organization in using that data. These stages need not be linear in one direction, but iterative in which data are improved or extended for additional needs at any stages.
 
 ### Orginal Data used
-mass_townships_2010_aeac84
-Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
-Description: This is the township layer for Massachusetts
-Number of features: 351
+- mass_townships_2010_aeac84
+- Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
+- Description: This is the township layer for Massachusetts
+- Number of features: 351
 
 
 new_england_urbanized_areas_2010_aeac84
-Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
-Description: This is the polygon showing the urbanized areas in the Massachusetts
-Number of features: 21
+- Source: Massachusetts Traffic Records Analysis Center(MassTRAC)
+- Description: This is the polygon showing the urbanized areas in the Massachusetts
+- Number of features: 21
 
 
 ## Step by Step Process
@@ -45,12 +45,12 @@ Number of features: 21
 ## Integrate the New England Urbanized Area layer into the Massachusetts Township layer with a spatial overlay tool.
 
 ### Identity
-Purpose: It is used integrate the Urbanized Area layer (identity) into the Massachusetts Township layer (input). In terms of geo-processing, integration mean combining two different geographies (layers) into one, splitting the polygons of each geography where their geometries intersect. Doing so creates a new layer of both geographies, in which new polygons are created from splitting each where they overlap.
-Input: mass_townships_2010_aeac84
-Identify features: new_england_urbanized_areas_2010_aeac84
-Attributes to join: All attributes ( It makes all attributes from input features as well as identity features will be transfered to the output layer )
-Output layer: new_england_urbanized_areas_townships_2010_aeac84_idty
-Output Description: 
+- Purpose: It is used integrate the Urbanized Area layer (identity) into the Massachusetts Township layer (input). In terms of geo-processing, integration mean combining two different geographies (layers) into one, splitting the polygons of each geography where their geometries intersect. Doing so creates a new layer of both geographies, in which new polygons are created from splitting each where they overlap.
+- Input: mass_townships_2010_aeac84
+- Identify features: new_england_urbanized_areas_2010_aeac84
+- Attributes to join: All attributes ( It makes all attributes from input features as well as identity features will be transfered to the output layer )
+- Output layer: new_england_urbanized_areas_townships_2010_aeac84_idty
+- Output Description: 
 - It basically cut the townships layer and added the new england urbanized layer
 - Now it has both the townships polygons and urbanized polygons
 
@@ -67,10 +67,10 @@ Create two fields for identity layer, with one field being labeled AREA_URB and 
 Task is to find how much area is urbanized and how is not urbanized
 ### Select by Attributes
 For AREA_NURB
-Purpose: To select the attributes of a layer with condition.
-Tool: Select by Attributes
-Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
-Where: FID_new_england_urbanized_areas_2010_aeac84    is equal to -1
+- Purpose: To select the attributes of a layer with condition.
+- Tool: Select by Attributes
+- Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
+- Where: FID_new_england_urbanized_areas_2010_aeac84    is equal to -1
 
 ### Calculate field
 Right click on the AREA_NURB > Calculate field
