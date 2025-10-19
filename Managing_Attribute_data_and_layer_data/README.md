@@ -100,15 +100,15 @@ Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 - Nulls make create issue while doing any numerical analysis, they have to be changed to 0
 
 Tool: Select by Attributes
-Purpose: To select the attributes of a layer with condition.
-Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
-Where: AREA_URB  **is null**
-Output Description:
+- Purpose: To select the attributes of a layer with condition.
+- Input Rows: new_england_urbanized_areas_townships_2010_aeac84_idty
+- Where: AREA_URB  **is null**
+- Output Description:
 - It selects the rows with null values
 
 Right click on the AREA_URB > Calculate field
-Purpose: To calculate the values of a field for a feature class/feature layer or raster
-Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
+- Purpose: To calculate the values of a field for a feature class/feature layer or raster
+- Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 * Use the selected records: 309 ( it shows how many rows got selected )
 * field name: AREA_URB
 * Expression: AREA_URB = 0
@@ -122,18 +122,18 @@ Input Table: new_england_urbanized_areas_townships_2010_aeac84_idty
 
 
 ### Summarize –i.e. aggregate by geography– the integrated township layer on the urbanized and non-urbanized area to create a table that contains one record for each township.
-Purpose: To calculate the summary statistics for fields in a table
-Tool: Summary Statistics
-Input table: new_england_urbanized_areas_townships_2010_aeac84_idty
-Ouput table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
+- Purpose: To calculate the summary statistics for fields in a table
+- Tool: Summary Statistics
+- Input table: new_england_urbanized_areas_townships_2010_aeac84_idty
+- Ouput table: new_england_urbanized_areas_townships_2010_aeac84_idty_smry
 Statistics fields:
-Field, Statistic type:  
-AREA_URB,   SUM
-AREA_NURB,   SUM
-Case field: TOWN
-Output Description:
-It groups all the rows with a common value and it calculated the sum of the statistic field
-For both the township and urbanized layer the common field is TOWN
+- Field, Statistic type:  
+- AREA_URB,   SUM
+- AREA_NURB,   SUM
+- Case field: TOWN
+- Output Description:
+ - It groups all the rows with a common value and it calculated the sum of the statistic field
+ -  For both the township and urbanized layer the common field is TOWN
 - Another observations, The output is not a shapefile but it is a table, so in the earlier techniques, they have input rows, input records, input field. So as per the type it requests.
 - FREQUENCY: Number of polygons present in each township. The polygons will be Urbanized and Unurbanized
 
