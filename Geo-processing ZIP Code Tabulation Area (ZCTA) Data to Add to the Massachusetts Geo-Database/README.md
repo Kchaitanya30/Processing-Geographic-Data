@@ -155,7 +155,8 @@ In the layer mass_zctas_2010_aeac84_c1, the fields are filtered in the Join Fiel
 
 ## Part II: Spatially Joining the Collision Groups.
 
-### Spatially join and summarize the collision to the Integrated ZCTA and urbanized area layer (from Part 1, Step 1) for the five collision type groups to the urbanized and non-urbanized area. The summarization should only include the counts for each collision group.
+### Spatially join and summarize the collision to the Integrated ZCTA and urbanized area layer (from Part 1, Step 1) for the five collision type groups to the urbanized and non-urbanized area. The summarization should only include the counts for each collision group. 
+
 
 
 
