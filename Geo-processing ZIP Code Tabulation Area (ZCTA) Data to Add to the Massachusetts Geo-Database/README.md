@@ -417,24 +417,24 @@ Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
 Use the selected records: 544
 Field Name: CNT_ETE_URB
 Expression:
-Then in it select CNT_ETE_URB = !CNT_ANGL! Output description: It populates the Count of collisions in the urbanized areas
+Then in it select CNT_ETE_URB = !CNT_ETE! Output description: It populates the Count of collisions in the urbanized areas
 
 
 
 
 
 
-Spatially joining One Vehicle collision type and Adding the summarized collision count to the Integrated ZCTA layer
+Spatially joining Sideswipe collision type and Adding the summarized collision count to the Integrated ZCTA layer
 
 Tool: Spatial Join
 Purpose: To join the township_and_urbanized layer with the crash points. This operation performs a point-in-polygon process that calculates the count of all crash locations within each township polygon.
 
-Target Features: mass_zctas_2010_aeac84_idty_ANGL
+Target Features: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV
 Join Features: mass_trac_crashes_2010_aeac84
-Use the filtered records: 23,404
+Use the filtered records: 12,709
 Join Operation: Join one to one
 Match Option: Intersect
-Output: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Output: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP
 Field Selection: Delete all fields from the join layer except  MannerCol_ctgy1
 Output Description: The resulting layer contains all End to End -filtered crash points joined with the Integrated ZCTA polygons. In the output layer delete Target_FID it is the Objectid of the joined layer, which is redundant
 
@@ -442,55 +442,55 @@ Output Description: The resulting layer contains all End to End -filtered crash 
 Alter Field
 Purpose: To change the name of the field without changing its position in the table
 
-Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP
 Field Name: Join_Count
-New field Name: CNT_ETE
-New Field Alias: CNT_ETE
-Output Description: The field name was successfully changed to CNT_ETE.
+New field Name: CNT_SWP
+New Field Alias: CNT_SWP
+Output Description: The field name was successfully changed to CNT_SWP.
 
-In the mass_zctas_2010_aeac84_idty_ANGL_ETE layer's Attribute table
+In the mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP layer's Attribute table
 Add two new fields
 
 Tool: Add Field
 Purpose: To create new fields in the attribute table for storing counts of urban and non-urban collisions.
-Field Name: CNT_ETE_URB
-Alias: CNT_ETE_URB
+Field Name: CNT_SWP_URB
+Alias: CNT_SWP_URB
 Data Type: long
-Create another field named CNT_ETE_NURB using the same parameters.
+Create another field named CNT_SWP_NURB using the same parameters.
 
 Tool: Calcualte Field
 purpose: To populate all the null values in the fields to the 0 so that it would be easy to copy other values in it.
-input layer: mass_zctas_2010_aeac84_idty_ANGL_ETE
-For both CNT_ETE_URB AND CNT_ETE_NURB 
+input layer: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP
+For both CNT_SWP_URB AND CNT_SWP_NURB 
 Convert all nulls to 0
 
 
-#### Calculating ETE Collision Counts for Urban and Non-Urban Areas
+#### Calculating Side Swipe Collision Counts for Urban and Non-Urban Areas
 Select by attributes
 Purpose: To isolate polygons representing non-urbanized areas.
 
-Input Rows: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Input Rows: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP
 Where: FID_new_england_urbanized_areas_2010_aeac84 is equal to -1
 Outcome Description: Selects all rows where FID_new_england_urbanized_areas_2010_aeac84 equals -1, identifying polygons that represent non-urbanized areas.
 Calculate Field:
-Right Click on CNT_ETE_NURB and choose Calculate field
-Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Right Click on CNT_SWP_NURB and choose Calculate field
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE_OV_OTHR_SWP
 Use the selected records: 454
-Field Name: CNT_ETE_NURB
+Field Name: CNT_SWP_NURB
 Expression:
-Then in it select CNT_ETE_NURB = !CNT_ETE! Outcome desciption: It populates all the values that are selected in the CNT_ETE to the CNT_ETE_NURB
-By this the Count of ETE collisions that occured inthe Non urban areas is acquired
+Then in it select CNT_SWP_NURB = !CNT_SWP! Outcome desciption: It populates all the values that are selected in the CNT_SWP to the CNT_SWP_NURB
+By this the Count of SWP collisions that occured inthe Non urban areas is acquired
 ** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
 
 
 Calcualte Field
-Right Click on CNT_ETE_URB and choose Calculate field
+Right Click on CNT_SWP_URB and choose Calculate field
 
-Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Input table: mass_zctas_2010_aeac84_idty_ANGL_OV_SWP
 Use the selected records: 544
-Field Name: CNT_ETE_URB
+Field Name: CNT_SWP_URB
 Expression:
-Then in it select CNT_ETE_URB = !CNT_ANGL! Output description: It populates the Count of collisions in the urbanized areas
+Then in it select CNT_SWP_URB = !CNT_SWP! Output description: It populates the Count of collisions in the urbanized areas
 
 
 
@@ -499,5 +499,107 @@ Then in it select CNT_ETE_URB = !CNT_ANGL! Output description: It populates the 
 
 
 
+Add field
+Layer: mass_trac_crashes_2010_aeac84
+Field name: Offland
+Alias: Offland
+Datatype: short
+Number format: Numeric
+output: It adds a new field called offland
+In the newly added field there will be nulls
 
 
+Recode
+Right click on the Offland
+
+Calculate field:
+Input: mass_trac_crashes_2010_aeac84
+Expression: Offland= 0
+Output description: The nulls inthe newly created field will be changed to 0
+
+Select by location
+input: mass_trac_crashes_2010_aeac84
+Relationship: Intersect
+Selecting Features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Check Invert Spatial Relationship
+Outcome description: It selects the points that are outside the polygons
+Calculate field
+Input table: mass_trac_crashes_2010_aeac84
+
+Use the selected records: 154
+Expression:
+Offland = 1
+Outcome description: It replaces the 0 with 1 in the selected rows for the Offland field.
+Save the off-land collisions to a separate layer because the geo-processing will be easier
+
+Export Crash points layer
+Purpose: To create a new layer containing only the off-land collision points for easier geoprocessing.
+
+Input features: mass_trac_crashes_2010_aeac84
+output: mass_trac_crashes_2010_aeac84_Offland
+Output Description: The result will be a layer with 154 rows representing off-land collision points.
+Near
+Purpose: To identify the nearest polygon for each off-land collision point and record its location coordinates.
+
+Input: mass_trac_crashes_2010_aeac84_Offland
+Near features: new_england_urbanized_areas_townships_2010_aeac84_idty
+Check location: it adds NEAR_X AND NEAR_Y to the table
+Output Description: Adds NEAR_X and NEAR_Y fields to the attribute table, representing the coordinates of the nearest polygon.
+
+
+
+Purpose: To incorporate the Offland collision data identified in previous steps into the integrated final layer for determining the total count of each collision category.
+
+Tool: Summary Statistics
+
+Input table: mass_trac_crashes_2010_aeac84_Offland
+
+Output table: mass_trac_crashes_2010_aeac84_Offland_smry Statistics fields:
+
+Field: MannerCol_ctg Statistic Type: Count
+
+Case Field: NEAR_FID, IS_URBAN, CityTown, MannerCol_ctgy
+
+Outcome desciption: It gives a summary with count of Different MannerCor_ctgy collisions in the offland locations. Apart from that I have used CityTown, IS_URBAN( URBAN is 1 and Non-Urban is 2) and it also has NEAR_FID to join the count to the other layers. For this summary Count statistic type is choosen to get the count of the collision for each Collision category. It has 57 rows because I have used CityTown layer so that it is classified accordingly.
+
+
+
+Pivoting (Transposing) the Summarized Off-land Collison Counts
+Purpose: To convert the summarized offland collision data from a vertical (long) format to a horizontal (wide) format for easier integration with township data.
+
+Tool: Pivot table
+Input table: mass_trac_crashes_2010_aeac84_Offland_smry
+Input fields: IS_URBAN, CityTown, NEAR_FID
+Pivot Field: MannerCol_ctgy
+Value Field: FREQUENCY
+output table: mass_trac_crashes_2010_aeac84_Offland_pvt
+Outcome description: The result is a transposed table where each collision category becomes a separate column, showing counts of offland collisions by township and urbanization type.
+
+Add Join
+Input: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+
+Input field: OBJECTID_1
+Join table: mass_trac_crashes_2010_aeac84_Offland_pvt
+Join field: NEAR_FID
+Outcome description: This creates a temporary join that allows the calculation of the total collision counts for each collision category by combining on-land and offland data.
+
+
+Create 5 New fields in the integrated layer
+
+Layer: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+New field: TOTAL_CNT_ANGL LONG NUMERIC
+New field: TOTAL_CNT_ETED LONG NUMERIC
+New field: TOTAL_CNT_SSWP LONG NUMERIC
+New field: TOTAL_CNT_SVHL LONG NUMERIC
+New field: TOTAL_CNT_OTHR LONG NUMERIC
+
+
+Calculate field and covert all the Null's inthe fields to 0 for calculation purposes
+
+Populate the total values
+Tool: Calculate field
+Input table: township_idty_massTrac_ANGL_ETED_OTHR_SSWP_SVHL
+Field Name: TOTAL_CNT_ANGL
+Expression: TOTAL_CNT_ANGL = !CNT_ANGL! + !ANGL!
+Outcome description: This step calculates the total number of ANGL collisions, combining polygon (on-land) and offland values. However, an error occurred during execution, which needs to be reviewed before proceeding. WARNING 002858: Certain rows set to NULL due to error while evaluating python expression: typeError: unsupported operand type +: and 'NoneType'
+checked in the chatgpt, it says that this is a common ArcPro error, adds that one of the fields has null in it, I have rechecked both the fields and both fields have no nulls. Not sure about this error
