@@ -37,9 +37,111 @@ Tool: Clip
 - Output: mass_zctas_2010_aeac84_c1
 - Output description: The ZCTA layer matches the township layer, the ZCTA layer has holes that are preserved in this process. When checked the holes are waterbodies, park area. As it is a zipcode layer, it may only have the servicable locations, that could be the reason for not having the data.
 
+- There are some holes inside the ZCTA orginal layer they need to filled and the idea is to give the township shape to the ZCTA layer but it misses few slivers and few polygons. Hence those missing parts and slivers needs to be added tot he clipped ZCTA so that it will match the township layer.
+
+Tool: Erase
+Input: mass_townships_2010_aeac84
+Erase: mass_zctas_2010_aeac84_c1
+Output: mass_townships_2010_aeac84_e1
+Output description: The output has the portions of the input features( township ) falling outside the erase features ( ZCTA Clip ) 
+
+- In the Erased layer, all the portions of the township layer are not divided, they need to be seperated.
+Tool: Multipart to Single part
+Purpose: To crate a feature class of single part features by separating multipart input features
+Input features: mass_townships_2010_aeac84_e1
+Output: mass_townships_2010_aeac84_mts
+Output: It divides all the multipart features to the single part means it makes each polygons seperate.
+
+
+
+Tool: Near
+Purpose: First vertices of the one polygon and first vertices of the another polygon will be identified
+Input: mass_townships_2010_aeac84_mts
+Near features: mass_zctas_2010_aeac84_c1
+Check Location
+Distance type: Meters ( As the layer's linear unit is Meters)
+Field Name>
+Feature ID: NEAR_FID
+Distance: NEAR_DIST
+Location x-coordinate: Near_X
+Location y-coordinate: Near_Y
+Output description: This adds the NEAR_FID, NEAR_DIST, NEAR_X, and NEAR_Y fields to the mass_townships_2010_aeac84_mts layer
+It checks the nearest distance from the clip layer to the multipart layer
+
+Now all the slivers got its nearest polygons NEAR_FID, now mts table needs to joined to the clip layer so that it can be merged
+
+Tool: Join
+Purpose: To add the fields of the mass_townships_2010_aeac84_mts layers, so that it is helpful for merging. In the merge operation it does not add the fields of the both layers so it would be an issue while doing dissolve
+Input: mass_zctas_2010_aeac84_c1
+Input: OBJECTID
+Join table: mass_townships_2010_aeac84_mts
+Join field: NEAR_FID
+Transfer fields:
+Select All fields are selected expect shape_area and shape_length, as they are redundant
+Output Description: In the mass_zctas_2010_aeac84_c1 layer there are many nulls. The cells with nulls means the polygons are not attached to any township pieces. 
+
+
+Tool: Merge
+Purpose: To combine multiple polygons so that it fills all the missing parts in the clipped ZCTA layer
+Input: mass_zctas_2010_aeac84_c1
+mass_townships_2010_aeac84_mts
+output: mass_zctas_2010_aeac84_m1
+Output Description: It merged both the polygons and it also has all the fileds from the input clip ZCTA layer. 
+
+
+Tool: Check Geometry
+Purpose: It generates a repost fo geometry problems in a feature class
+input: mass_zctas_2010_aeac84_m1
+Output Description: Warning 000442: self intersections at 171 in mass_zctas_2010_aeac84_m1 . It is showing error that mean at 171 it got looped itself
+
+
+Tool: Repair Geometry
+Purpose: It inspects features for geometry problems and repairs them. 
+input: mass_zctas_2010_aeac84_m1
+Check delete features with null geometry
+Enable undo, for our safety if the layer get corrupted
+Risk is when we try to do it, it may corrupt the layer
+Output description: It repairs the geometry issues and give a clear layer. Check the geometry again to confirm if the error is solved
+
+
+we have a situation now, When we joined the Clip layer and Multipointtosinglepoint layer, it added nulls for the NEAR_FID. They need to be populated with the OBJECTID so that it helps in dissolve
+
+Tool: Select by attributes
+Purpose: To select the rows that are null
+input: mass_zctas_2010_aeac84_m1
+Where  NEAR_FID = NULL
+Ouput description: It selects all the rows of the NEAR_FID that are null
+
+Layer: mass_zctas_2010_aeac84_m1
+Right click on the NEAR_FID
+Tool: Calcualte Field
+NEAR_FID = !OBJECTID!
+Output Description: It populates all the values of the OBJECTID to the nulls in the NEAR_FID field. It helps in dissolve process, if this is not done it dissolves all the null values in the NEAR_FID, this proces avoids it
+
+
+Tool: Dissolve
+Purpose: Aggregates features based on specified attributes, the plan is to dissolve all the slivers to the ZCTA layer
+input: mass_zctas_2010_aeac84_m1
+Dissolve Fields: NEAR_FID
+Check Create multipart feature
+Don’t check Unsplit — it could create slivers
+Based on a common field or identifier, it dissolves features
+Output: mass_zctas_2010_aeac84_v2
+Output description: It is a one-to-many relationship, dissolves all the rows that are similar. Finally it matches the township layer. But it doesnot have all the fields
+
+Tool: Join
+Purpose: To permanently join the contents of two tables based on a common attribute
+Input: mass_zctas_2010_aeac84_v2
+Input field: NEAR_FID
+Join Table: mass_zctas_2010_aeac84
+Join field: OBJECTID
+Output description: It joins all the fields of the join table to the input table, It matches the township layer shape and it has all the fields of the ZCTA layer
+
+
 ### Integrate the New England Urbanized Area layer into the Massachusetts ZCTA layer
 Tool: Identity
-- input: mass_zctas_2010_aeac84_c1
+Purpose: To create a geometric intersection of the input features and identity features. The input featues or portions thereof that overlap identity features will get the attributes of those identity features
+- input: mass_zctas_2010_aeac84_v2
 - Identity: new_england_urbanized_areas_2010_aeac84
 - output: mass_zctas_2010_aeac84_idty
 
@@ -86,7 +188,7 @@ Tool: Calculate Field:
 - Use the selected rows: 454
 Expression:
 - AREA_URB = 0
-
+- Output description: It populates all the nulls in the AREA_URB field with 0
 
 Repeat the same for the AREA_NURB Field, first perform the select by attributes to check the rows that are null then.
 
@@ -95,11 +197,12 @@ Tool:  Calculate Field:
 - Use the selected rows: 544
 Expression:
 - AREA_NURB = 0
-
+- Output description: It populates all the nulls with 0
 
 ### Summarize –i.e. aggregate by geography– the integrated ZCTA layer on the urbanized and non-urbanized area to create a table that contains one record for each ZCTA
 
 Tool: Summary Statistics
+- Purpose: To calculate summary statistics for fields in a table
 - Input table: mass_zctas_2010_aeac84_idty
 - output table: mass_zctas_2010_aeac84_idty_smry
 Statistis fields
@@ -109,11 +212,13 @@ Statistis fields
 Case Fields:
 - ZCTA5CE10
 It is the common field between the integratede layer and the ZCTA layer which represents the geography. It gives the Urban and Non-Urban area for each geography
+-Output description: It gives the sum area of urban and non-urban areas inthe layer and also give the frequency of each row.
 
 ### Join the summarized urban/non-urban area table to the ZCTA layer and make the join permanent
 
 Tool: Join field
-- Input table: mass_zctas_2010_aeac84_c1
+- Purpose: To permanently join the two tables
+- Input table: mass_zctas_2010_aeac84_v2
 - Input field: ZCTA5CE10
 - Join table: mass_zctas_2010_aeac84_idty_smry
 - Join field: ZCTA5CE10
@@ -126,18 +231,21 @@ Transfer fields:
 ### Properly name all new fields in the updated ZCTA layer for the land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
 
 Tool: Alter Field
-- Input field: mass_zctas_2010_aeac84_c1
+- Purpose: It renames fields and fields aliases without changing its position in the table
+- Input table: mass_zctas_2010_aeac84_v2
 - Field Name: FREQUENCY
 - New Field Name: CNT_AREA_PIECES
 - New Field Alias: CNT_AREA_PIECES
 
 For SUM_AREA_URB
 The layer is in Albers Equal Area Conic projection, so the numerical unit is in meters
+- Purpose: It renames fields and fields aliases without changing its position in the table
 - Field Name: SUM_AREA_URB
 - New Field Name: URBAN_AREA_M2
 - New Field ALias: URBAN_AREA_M2
 
 For SUM_AREA_NURB
+- Purpose: It renames fields and fields aliases without changing its position in the table
 - Field Name: SUM_AREA_NURB
 - New Field Name: NON_URBAN_AREA_M2
 - New Field ALias: NON_URBAN_AREA_M2
@@ -150,7 +258,8 @@ Layer: mass_zctas_2010_aeac84_idty
 - OBJECTID
 - Shape_Leng from the new_england_urbanized_areas which is not required
 
-In the layer mass_zctas_2010_aeac84_c1, the fields are filtered in the Join Field operation, it looks clean
+- Layer: mass_zctas_2010_aeac84_v2
+- Delete - NEAR_FID, It is a duplicate of the OBJECID
 
 
 ## Part II: Spatially Joining the Collision Groups.
@@ -158,26 +267,230 @@ In the layer mass_zctas_2010_aeac84_c1, the fields are filtered in the Join Fiel
 ### Spatially join and summarize the collision to the Integrated ZCTA and urbanized area layer (from Part 1, Step 1) for the five collision type groups to the urbanized and non-urbanized area. The summarization should only include the counts for each collision group. 
 
 
+#### Assigning Collision Types to Areal Geographies
+Mask the data and make only visible the observations that are required
+
+Tool: Defination query
+Purpose: To separate the locations so that each collision type can be processed individually.
+Layer: mass_trac_crashes_2010_aeac84
+Procedure: From the Layer Table of Contents, select the Properties option to open the dialog box. In it, choose New Definition Query
+Where: MannerColl_Grp is equal to ANGL
+Outcome Description: Filters and displays only the records corresponding to the ANGL collision type.
+
+Once the Definition Query has been applied, the selected locations need to be aggregated using a spatial join. Aggregate the individual and grouped collision types with a Spatial Join from the mass_trac_crashes_2010_aeac84 layer to the Integrated ZCTA and urbanized area layer (mass_zctas_2010_aeac84_idty).
+
+
+Spatially joining Angel collision type and Adding the summarized collision count to the Integrated ZCTA layer
+
+Tool: Spatial Join
+Purpose: To join the township_and_urbanized layer with the crash points. This operation performs a point-in-polygon process that calculates the count of all crash locations within each township polygon.
+
+Target Features: mass_zctas_2010_aeac84_idty
+Join Features: mass_trac_crashes_2010_aeac84
+Use the filtered records: 31,631
+Join Operation: Join one to one
+Match Option: Intersect
+Output: mass_zctas_2010_aeac84_idty_ANGL
+Field Selection: Delete all fields from the join layer except OBJECTID, ID, CityTown, MannerColl, and MannerCol_ctgy. OBJECTID and other redundant fields can be removed later if needed.
+Output Description: The resulting layer contains all ANGL-filtered crash points joined with the Integrated ZCTA layer. In output layer delete Target_FID it is the Objectid of the joined layer, which is redundantL
+
+
+Alter Field
+Purpose: To change the name of the field without changing its position in the table
+
+Input table: mass_zctas_2010_aeac84_idty_ANGL
+Field Name: Join_Count
+New field Name: CNT_ANGL
+New Field Alias;CNT_ANGL
+Output Description: The field name was successfully changed to CNT_ANGL.
+
+In the mass_zctas_2010_aeac84_idty_ANGL layer's Attribute table
+Add two new fields
+
+Tool: Add Field
+Purpose: To create new fields in the attribute table for storing counts of urban and non-urban collisions.
+Field Name: CNT_ANGL_URB
+Alias: CNT_ANGL_URB
+Data Type: long
+Create another field named CNT_ANGL_NURB using the same parameters.
+
+Tool: Calcualte Field
+purpose: To populate all the null values in the fields to the 0 so that it would be easy to copy other values in it.
+input layer: mass_zctas_2010_aeac84_idty_ANGL
+For both CNT_ANGL_URB AND CNT_ANGL_NURB 
+Convert all nulls to 0
+
+
+#### Calculating ANGL Collision Counts for Urban and Non-Urban Areas
+Select by attributes
+Purpose: To isolate polygons representing non-urbanized areas.
+
+Input Rows: mass_zctas_2010_aeac84_idty_ANGL
+Where: FID_new_england_urbanized_areas_2010_aeac84 is equal to -1
+Outcome Description: Selects all rows where FID_new_england_urbanized_areas_2010_aeac84 equals -1, identifying polygons that represent non-urbanized areas.
+Calculate Field:
+Right Click on CNT_ANGL_NURB and choose Calculate field
+Input table: mass_zctas_2010_aeac84_idty_ANGL
+Use the selected records: 454
+Field Name: CNT_ANGL_NURB
+Expression:
+Then in it select CNT_ANGL_NURB = !CNT_ANGL! Outcome desciption: It populates all the values that are selected in the CNT_ANGL to the CNT_ANGL_NURB
+By this the Count of ANGL collisions that occured inthe Non urban areas is acquired
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+Calcualte Field
+Right Click on CNT_ANGL_URB and choose Calculate field
+
+Input table: new_england_urbanized_areas_township_idty_massTrac_ANGL
+Use the selected records: 544
+Field Name: CNT_ANGL_URB
+Expression:
+Then in it select CNT_ANGL_URB = !CNT_ANGL! Output description: It populates the Count of collisions in the urbanized areas
+
+** In the same way, the process is carried out for the remaining collision types. The procedure is repetitive and follows the same sequence of steps. The detailed process for each collision type is provided below **
+
+
+
+Spatially joining End to End collision type and Adding the summarized collision count to the Integrated ZCTA layer
+
+Tool: Spatial Join
+Purpose: To join the township_and_urbanized layer with the crash points. This operation performs a point-in-polygon process that calculates the count of all crash locations within each township polygon.
+
+Target Features: mass_zctas_2010_aeac84_idty_ANGL
+Join Features: mass_trac_crashes_2010_aeac84
+Use the filtered records: 35,213
+Join Operation: Join one to one
+Match Option: Intersect
+Output: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Field Selection: Delete all fields from the join layer except  MannerCol_ctgy1
+Output Description: The resulting layer contains all End to End -filtered crash points joined with the Integrated ZCTA polygons. In the output layer delete Target_FID it is the Objectid of the joined layer, which is redundant
+
+
+Alter Field
+Purpose: To change the name of the field without changing its position in the table
+
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Field Name: Join_Count
+New field Name: CNT_ETE
+New Field Alias: CNT_ETE
+Output Description: The field name was successfully changed to CNT_ETE.
+
+In the mass_zctas_2010_aeac84_idty_ANGL_ETE layer's Attribute table
+Add two new fields
+
+Tool: Add Field
+Purpose: To create new fields in the attribute table for storing counts of urban and non-urban collisions.
+Field Name: CNT_ETE_URB
+Alias: CNT_ETE_URB
+Data Type: long
+Create another field named CNT_ETE_NURB using the same parameters.
+
+Tool: Calcualte Field
+purpose: To populate all the null values in the fields to the 0 so that it would be easy to copy other values in it.
+input layer: mass_zctas_2010_aeac84_idty_ANGL_ETE
+For both CNT_ETE_URB AND CNT_ETE_NURB 
+Convert all nulls to 0
+
+
+#### Calculating ETE Collision Counts for Urban and Non-Urban Areas
+Select by attributes
+Purpose: To isolate polygons representing non-urbanized areas.
+
+Input Rows: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Where: FID_new_england_urbanized_areas_2010_aeac84 is equal to -1
+Outcome Description: Selects all rows where FID_new_england_urbanized_areas_2010_aeac84 equals -1, identifying polygons that represent non-urbanized areas.
+Calculate Field:
+Right Click on CNT_ETE_NURB and choose Calculate field
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Use the selected records: 454
+Field Name: CNT_ETE_NURB
+Expression:
+Then in it select CNT_ETE_NURB = !CNT_ETE! Outcome desciption: It populates all the values that are selected in the CNT_ETE to the CNT_ETE_NURB
+By this the Count of ETE collisions that occured inthe Non urban areas is acquired
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
+
+
+Calcualte Field
+Right Click on CNT_ETE_URB and choose Calculate field
+
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Use the selected records: 544
+Field Name: CNT_ETE_URB
+Expression:
+Then in it select CNT_ETE_URB = !CNT_ANGL! Output description: It populates the Count of collisions in the urbanized areas
 
 
 
 
 
 
+Spatially joining One Vehicle collision type and Adding the summarized collision count to the Integrated ZCTA layer
+
+Tool: Spatial Join
+Purpose: To join the township_and_urbanized layer with the crash points. This operation performs a point-in-polygon process that calculates the count of all crash locations within each township polygon.
+
+Target Features: mass_zctas_2010_aeac84_idty_ANGL
+Join Features: mass_trac_crashes_2010_aeac84
+Use the filtered records: 23,404
+Join Operation: Join one to one
+Match Option: Intersect
+Output: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Field Selection: Delete all fields from the join layer except  MannerCol_ctgy1
+Output Description: The resulting layer contains all End to End -filtered crash points joined with the Integrated ZCTA polygons. In the output layer delete Target_FID it is the Objectid of the joined layer, which is redundant
 
 
+Alter Field
+Purpose: To change the name of the field without changing its position in the table
+
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Field Name: Join_Count
+New field Name: CNT_ETE
+New Field Alias: CNT_ETE
+Output Description: The field name was successfully changed to CNT_ETE.
+
+In the mass_zctas_2010_aeac84_idty_ANGL_ETE layer's Attribute table
+Add two new fields
+
+Tool: Add Field
+Purpose: To create new fields in the attribute table for storing counts of urban and non-urban collisions.
+Field Name: CNT_ETE_URB
+Alias: CNT_ETE_URB
+Data Type: long
+Create another field named CNT_ETE_NURB using the same parameters.
+
+Tool: Calcualte Field
+purpose: To populate all the null values in the fields to the 0 so that it would be easy to copy other values in it.
+input layer: mass_zctas_2010_aeac84_idty_ANGL_ETE
+For both CNT_ETE_URB AND CNT_ETE_NURB 
+Convert all nulls to 0
 
 
+#### Calculating ETE Collision Counts for Urban and Non-Urban Areas
+Select by attributes
+Purpose: To isolate polygons representing non-urbanized areas.
+
+Input Rows: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Where: FID_new_england_urbanized_areas_2010_aeac84 is equal to -1
+Outcome Description: Selects all rows where FID_new_england_urbanized_areas_2010_aeac84 equals -1, identifying polygons that represent non-urbanized areas.
+Calculate Field:
+Right Click on CNT_ETE_NURB and choose Calculate field
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Use the selected records: 454
+Field Name: CNT_ETE_NURB
+Expression:
+Then in it select CNT_ETE_NURB = !CNT_ETE! Outcome desciption: It populates all the values that are selected in the CNT_ETE to the CNT_ETE_NURB
+By this the Count of ETE collisions that occured inthe Non urban areas is acquired
+** Use Switch in the Attribute table, it selects all the rows that are not -1, which means the polygons that are urbanized **
 
 
+Calcualte Field
+Right Click on CNT_ETE_URB and choose Calculate field
 
-
-
-
-
-
-
-
+Input table: mass_zctas_2010_aeac84_idty_ANGL_ETE
+Use the selected records: 544
+Field Name: CNT_ETE_URB
+Expression:
+Then in it select CNT_ETE_URB = !CNT_ANGL! Output description: It populates the Count of collisions in the urbanized areas
 
 
 
