@@ -40,7 +40,13 @@ new_england_urbanized_areas_2010_aeac84
 
 - Overlay the township and unurbanized layers, the below figure shows how different they are
 
- <img src="figures/townshipurboverlay.png" alt="Alt text" width="400" style="display: block; margin: 0 auto;">
+## Urbanized and Non-Urbanized Township Overlay
+
+<p align="center">
+  <img src="figures/townshipurboverlay.png" alt="Township Overlay Map" width="400">
+</p>
+
+*Figure: Overlay of Massachusetts townships and urbanized areas.*
 
   
 ## Integrate the New England Urbanized Area layer into the Massachusetts Township layer with a spatial overlay tool.
