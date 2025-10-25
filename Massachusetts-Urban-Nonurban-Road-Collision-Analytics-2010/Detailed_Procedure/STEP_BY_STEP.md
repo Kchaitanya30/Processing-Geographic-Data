@@ -166,7 +166,9 @@ Output Description:
 
 #### Map showing the Urbanized area in Massachusetts Townships
 
-<img src="figures/urbn.png" alt="Alt text" width="400"/>
+![Urbanized Areas Map](figures/urbn.png)
+
+
 
 #### Map showing the Un-Urbanized area in Massachusetts Townships
 
