@@ -1,4 +1,3 @@
-# Step-by-Step Geoprocessing Procedure
 # Geoprocessing Techniques Assignment 2 & 3
 
 In this assignment I will be working on several geo-processing techniques to prepare geographic data for analytical use. A primary objective is to think about geo-processing from a methodological perspective and plan out a systematic process, selecting the proper tools to efficiently prepare data, minimize errors, and produce a quality product for use by others. Multiple geographies will be integrated together, forming new geometries for the purpose of calculating geographic information on distinct land types, which are the urbanized and non-urbanized areas in each township.
@@ -40,6 +39,7 @@ new_england_urbanized_areas_2010_aeac84
 - In this assignment we will be working on collision data in massachusets, where initially township layer is divided to urbanized and unurbanized so that collision analysis can be done for both the areas. the following steps are done
 
 - Overlay the township and unurbanized layers, the below figure shows how different they are
+
  <img src="figures/townshipurboverlay.png" alt="Alt text" width="400" style="display: block; margin: 0 auto;">
 
   
