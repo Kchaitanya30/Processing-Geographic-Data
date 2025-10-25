@@ -41,7 +41,7 @@ new_england_urbanized_areas_2010_aeac84
 - Overlay the township and unurbanized layers, the below figure shows how different they are
 
 <p align="center">
-  <img src="../figures/urbn.png" alt="Urbanized Areas in Massachusetts" width="400">
+  <img src="../figures/townshipurboverlay.png" alt="Urbanized Areas in Massachusetts" width="400">
 </p>
 
 *Figure: Overlay of Massachusetts townships and urbanized areas.*
@@ -59,7 +59,9 @@ new_england_urbanized_areas_2010_aeac84
 - It basically cut the townships layer and added the new england urbanized layer
 - Now it has both the townships polygons and urbanized polygons
 
-<img src="figures/townshipurbnidty.png" alt="Alt text" width="400"/>
+<p align="center">
+  <img src="../figures/townshipurbnidty.png" alt="Alt text" width="400"/>
+</p>
 
 - The output has the FID_new_england_urbanized_areas_2010_aeac84 
 - It says whether the polygon we click isthe urbanized layer or it shows -1 if it is not linking to any of the polygon
@@ -170,13 +172,12 @@ Output Description:
 
 #### Map showing the Urbanized area in Massachusetts Townships
 
-![Urbanized Areas Map](figures/urbn.png)
-
+<img src="../figures/urbn.png" alt="Alt text" width="400"/>
 
 
 #### Map showing the Un-Urbanized area in Massachusetts Townships
 
-<img src="figures/nurb.png" alt="Alt text" width="400"/>
+<img src="../figures/nurb.png" alt="Alt text" width="400"/>
 
 ### Properly name all new fields in the updated Township layer for the two land types. That is, give the fields meaningful names so that a user can readily determine what data are in those fields.
 
