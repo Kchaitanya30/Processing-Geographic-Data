@@ -6,6 +6,16 @@
 </p>
 
 ### Crash Counts by Category — Urban vs. Non-Urban
+
+The ANGL category represents Angular Collisions (right-angle / side-impact crashes).
+
+You have two numeric fields in your integrated township layer:
+
+CNT_ANGL_URB → number of angular collisions in urban areas per township
+
+CNT_ANGL_NURB → number of angular collisions in non-urban areas per township
+
+
 <p align="center">
   <img src="figures/angl-counts-urb-nurb.png" alt="ANGL Counts (URB vs NURB)" width="800"><br/>
   <img src="figures/eted-counts-urb-nurb.png" alt="ETED Counts (URB vs NURB)" width="800"><br/>
